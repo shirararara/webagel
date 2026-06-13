@@ -159,7 +159,10 @@ file.name
 const fileName =
 `${Date.now()}.${extension}`;
 
-const result =
+const {
+error
+}
+=
 await supabase.storage
 .from("posts")
 .upload(
@@ -167,17 +170,11 @@ fileName,
 file
 );
 
-console.log(result);
+if(error){
 
-if(result.error){
-
-alert(result.error.message);
-
-console.error(result.error);
-
-return;
-
-}
+alert(
+error.message
+);
 
 return;
 
