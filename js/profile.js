@@ -6,9 +6,9 @@ document.getElementById(
 "avatar"
 );
 
-const avatarUrl =
+const avatarFile =
 document.getElementById(
-"avatarUrl"
+"avatarFile"
 );
 
 const username =
@@ -27,16 +27,120 @@ document.getElementById(
 );
 
 const {
-data: {
-user
-}
+data: { user }
 } =
 await supabase.auth.getUser();
 
-if(!user){
+if (!user) {
 
 location.href =
 "login.html";
+
+}
+
+let currentAvatar = "";
+
+/*
+Загрузка профиля
+*/
+
+const {
+data: profile
+}
+=
+await supabase
+.from("profiles")
+.select("*")
+.eq("id", user.id)
+.maybeSingle();
+
+if (profile) {
+
+username.value =
+profile.username || "";
+
+bio.value =
+profile.bio || "";
+
+currentAvatar =
+profile.avatar_url || "";
+
+if (currentAvatar) {
+
+avatar.src =
+currentAvatar;
+
+}
+
+}
+
+/*
+Предпросмотр изображения
+*/
+
+avatarFile.onchange =
+() => {
+
+const file =
+avatarFile.files[0];
+
+if (!file) return;
+
+avatar.src =
+URL.createObjectURL(file);
+
+};
+
+/*
+Сохранение профиля
+*/
+
+saveBtn.onclick =
+async () => {
+
+let avatarUrl =
+currentAvatar;
+
+/*
+Загрузка нового аватара
+*/
+
+if (
+avatarFile.files.length > 0
+) {
+
+const file =
+avatarFile.files[0];
+
+const extension =
+file.name
+.split(".")
+.pop();
+
+const fileName =
+`${user.id}.${extension}`;
+
+const {
+error: uploadError
+}
+=
+await supabase.storage
+.from("avatars")
+.upload(
+fileName,
+file,
+{
+upsert: true
+}
+);
+
+if (uploadError) {
+
+alert(
+uploadError.message
+);
+
+return;
 
 }
 
@@ -44,37 +148,32 @@ const {
 data
 }
 =
-await supabase
-.from("profiles")
-.select("*")
-.eq("id",user.id)
-.single();
+supabase.storage
+.from("avatars")
+.getPublicUrl(
+fileName
+);
 
-if(data){
-
-username.value =
-data.username || "";
-
-bio.value =
-data.bio || "";
-
-avatarUrl.value =
-data.avatar_url || "";
-
-avatar.src =
-data.avatar_url ||
-"https://placehold.co/150";
+avatarUrl =
+data.publicUrl;
 
 }
 
-saveBtn.onclick =
-async ()=>{
+/*
+Сохранение профиля
+*/
 
-const profile = {
+const {
+error
+}
+=
+await supabase
+.from("profiles")
+.upsert({
 
-id:user.id,
+id: user.id,
 
-email:user.email,
+email: user.email,
 
 username:
 username.value,
@@ -83,19 +182,11 @@ bio:
 bio.value,
 
 avatar_url:
-avatarUrl.value
+avatarUrl
 
-};
+});
 
-const {
-error
-}
-=
-await supabase
-.from("profiles")
-.upsert(profile);
-
-if(error){
+if (error) {
 
 alert(error.message);
 
@@ -104,8 +195,7 @@ return;
 }
 
 alert(
-"Сохранено"
+"Профиль сохранён"
 );
 
 };
-
