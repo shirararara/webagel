@@ -1,244 +1,166 @@
-import { supabase }
-from "./supabase.js";
+import { supabase } from "./supabase.js";
 
-const publishBtn =
-document.getElementById(
-"publishBtn"
-);
+const publishBtn = document.getElementById("publishBtn");
+const postImage = document.getElementById("postImage");
+const postText = document.getElementById("postText");
+const feed = document.getElementById("feed");
 
-const postImage =
-document.getElementById(
-"postImage"
-);
+async function loadFeed() {
 
-const postText =
-document.getElementById(
-"postText"
-);
+    const { data, error } = await supabase
+        .from("posts")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-const feed =
-document.getElementById(
-"feed"
-);
+    console.log("LOAD FEED:", data, error);
 
-/*
-Загрузка ленты
-*/
+    if (error) {
+        console.error(error);
+        return;
+    }
 
-async function loadFeed(){
+    feed.innerHTML = "";
 
-const {
-data: posts,
-error
-}
-=
-await supabase
-.from("posts")
-.select("*")
-.order(
-"created_at",
-{
-ascending:false
-}
-);
+    data.forEach(post => {
 
-if(error){
+        feed.innerHTML += `
+        <div class="post">
 
-console.error(error);
+            <div>
+                <img
+                src="${post.avatar_url || "https://placehold.co/50"}"
+                width="50">
+                <strong>${post.username || "Unknown"}</strong>
+            </div>
 
-return;
+            <p>${post.content || ""}</p>
 
-}
+            ${
+                post.image_url
+                ? `<img src="${post.image_url}" width="500">`
+                : ""
+            }
 
-feed.innerHTML = "";
+            <hr>
 
-posts.forEach(post=>{
+        </div>
+        `;
 
-feed.innerHTML += `
-
-<div class="post">
-
-<div>
-
-<img
-src="${post.avatar_url || 'https://placehold.co/50'}"
-width="50"
-height="50">
-
-<strong>
-
-${post.username}
-
-</strong>
-
-</div>
-
-<p>
-
-${post.content || ""}
-
-</p>
-
-${
-post.image_url
-?
-`<img
-src="${post.image_url}"
-width="500">`
-:
-""
-}
-
-<hr>
-
-</div>
-
-`;
-
-});
+    });
 
 }
 
-/*
-Создание поста
-*/
+publishBtn.onclick = async () => {
 
-publishBtn.onclick =
-async ()=>{
+    console.log("Кнопка нажата");
 
-const {
-data:{
-user
-}
-}
-=
-await supabase.auth
-.getUser();
+    const {
+        data: { user }
+    } = await supabase.auth.getUser();
 
-if(!user){
+    console.log("USER:", user);
 
-alert(
-"Нужно войти"
-);
+    if (!user) {
 
-return;
+        alert("Пользователь не найден");
 
-}
+        return;
 
-const {
-data: profile
-}
-=
-await supabase
-.from("profiles")
-.select("*")
-.eq(
-"id",
-user.id
-)
-.single();
+    }
 
-let imageUrl = null;
+    const profileResult = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
 
-/*
-Загрузка изображения
-*/
+    console.log("PROFILE:", profileResult);
 
-if(
-postImage.files.length > 0
-){
+    if (profileResult.error) {
 
-const file =
-postImage.files[0];
+        alert(profileResult.error.message);
 
-const extension =
-file.name
-.split(".")
-.pop();
+        return;
 
-const fileName =
-`${Date.now()}.${extension}`;
+    }
 
-const {
-error
-}
-=
-await supabase.storage
-.from("posts")
-.upload(
-fileName,
-file
-);
+    const profile = profileResult.data;
 
-if(error){
+    let imageUrl = null;
 
-alert(
-error.message
-);
+    if (postImage.files.length > 0) {
 
-return;
+        const file = postImage.files[0];
 
-}
+        const extension = file.name.split(".").pop();
 
-const {
-data
-}
-=
-supabase.storage
-.from("posts")
-.getPublicUrl(
-fileName
-);
+        const fileName =
+            `${Date.now()}.${extension}`;
 
-imageUrl =
-data.publicUrl;
+        const uploadResult =
+            await supabase.storage
+                .from("posts")
+                .upload(fileName, file);
 
-}
+        console.log("UPLOAD:", uploadResult);
 
-/*
-Создание записи
-*/
+        if (uploadResult.error) {
 
-const {
-error
-}
-=
-await supabase
-.from("posts")
-.insert({
+            alert(uploadResult.error.message);
 
-user_id:
-user.id,
+            return;
 
-username:
-profile.username,
+        }
 
-avatar_url:
-profile.avatar_url,
+        const { data } =
+            supabase.storage
+                .from("posts")
+                .getPublicUrl(fileName);
 
-content:
-postText.value,
+        imageUrl = data.publicUrl;
 
-image_url:
-imageUrl
+        console.log("IMAGE URL:", imageUrl);
 
-});
+    }
 
-if(error){
+    const insertResult =
+        await supabase
+            .from("posts")
+            .insert({
 
-alert(
-error.message
-);
+                user_id: user.id,
 
-return;
+                username:
+                    profile.username,
 
-}
+                avatar_url:
+                    profile.avatar_url,
 
-postText.value = "";
+                content:
+                    postText.value,
 
-postImage.value = "";
+                image_url:
+                    imageUrl
 
-loadFeed();
+            })
+            .select();
+
+    console.log("INSERT RESULT:", insertResult);
+
+    if (insertResult.error) {
+
+        alert(insertResult.error.message);
+
+        return;
+
+    }
+
+    alert("Пост создан");
+
+    postText.value = "";
+    postImage.value = "";
+
+    await loadFeed();
 
 };
 
