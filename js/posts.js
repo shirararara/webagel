@@ -106,25 +106,11 @@ posts.forEach(post => {
             ""
         }
 
-        <br><br>
-
-        <button
-        class="likeBtn"
-        data-id="${post.id}">
-
-            ${isLiked ? "❤️" : "🤍"}
-
-            ${likesCount}
-
-        </button>
-
-        <br><br>
-
         <div class="post-stats">
 
-            <span>
-                ❤️ ${likesCount}
-            </span>
+            <button class="likeBtn" data-id="${post.id}">
+                ${isLiked ? "❤️" : "🤍"} ${likesCount}
+            </button>
 
             <span>
                 💬 ${commentsCount}
@@ -132,7 +118,7 @@ posts.forEach(post => {
 
         </div>
 
-        <br><br>
+        <br>
 
         ${
             canDelete
@@ -580,20 +566,21 @@ document
         };
 
     });
-document
-    .getElementById(
-        "postModal"
-    )
-    .onclick = ()=>{
+const postModal =
+    document.getElementById("postModal");
 
-        document
-        .getElementById(
-            "postModal"
-        )
-        .style.display =
-            "none";
+postModal.onclick = () => {
+    postModal.style.display = "none";
+};
 
-    };
+// Prevent clicks inside the modal content from closing the modal
+postModal
+    .querySelector("#modalImageSide")
+    ?.addEventListener("click", e => e.stopPropagation());
+
+postModal
+    .querySelector("#modalInfoSide")
+    ?.addEventListener("click", e => e.stopPropagation());
 
 }
 
