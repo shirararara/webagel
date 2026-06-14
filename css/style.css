@@ -1,556 +1,624 @@
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+/* ===== RESET ===== */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-body{
-    background:#f5f6fa;
-    font-family:Arial,sans-serif;
-    color:#222;
+/* ===== BASE ===== */
+body {
+    background: #1a1a1f;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    color: #e8e8ec;
+    min-height: 100vh;
 }
 
-.app{
-    display:flex;
-    min-height:100vh;
+a {
+    text-decoration: none;
+    color: inherit;
 }
 
-/* ЛЕВАЯ ПАНЕЛЬ */
-
-.sidebar{
-    width:240px;
-    background:#ffffff;
-
-    border-right:1px solid #e5e7eb;
-
-    position:fixed;
-
-    left:0;
-    top:0;
-    bottom:0;
-
-    padding:24px;
-
-    display:flex;
-    flex-direction:column;
+/* ===== LAYOUT ===== */
+.app {
+    display: flex;
+    min-height: 100vh;
 }
 
-.logo{
-    font-size:32px;
-    font-weight:700;
-
-    color:#ff5ca8;
-
-    margin-bottom:40px;
+/* ===== SIDEBAR ===== */
+.sidebar {
+    width: 220px;
+    background: #111115;
+    border-right: 1px solid #2a2a32;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 24px 12px 20px;
+    z-index: 100;
 }
 
-.sidebar nav{
-    flex:1;
+.logo {
+    font-size: 26px;
+    font-weight: 800;
+    color: #ff4d9e;
+    letter-spacing: -0.5px;
+    padding: 0 12px;
+    margin-bottom: 32px;
+}
+
+.sidebar nav {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
 .sidebar a,
-.sidebar button{
-
-    display:flex;
-    align-items:center;
-
-    width:100%;
-
-    padding:14px 16px;
-
-    margin-bottom:10px;
-
-    text-decoration:none;
-
-    color:#333;
-
-    border:none;
-
-    background:none;
-
-    border-radius:14px;
-
-    cursor:pointer;
-
-    font-size:16px;
-
-    transition:.2s;
+.sidebar button {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #a0a0b0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    text-align: left;
 }
 
 .sidebar a:hover,
-.sidebar button:hover{
-
-    background:#ffe3f0;
-
+.sidebar button:hover {
+    background: #23232d;
+    color: #fff;
 }
 
-/* ОСНОВНАЯ ОБЛАСТЬ */
-
-.main-content{
-
-    margin-left:240px;
-
-    width:calc(100% - 240px);
-
-    max-width:none;
-
-    padding:20px 30px 30px 30px;
-
+.sidebar a.active {
+    background: rgba(255, 77, 158, 0.15);
+    color: #ff4d9e;
 }
 
-/* КАРТОЧКИ */
-
-.welcome-card,
-.create-post,
-.post{
-
-    background:white;
-
-    border-radius:20px;
-
-    overflow:hidden;
-
-    cursor:pointer;
-
-    transition:.2s;
-
+#logoutBtn {
+    margin-top: auto;
+    color: #666;
+    font-size: 14px;
 }
 
-.post:hover{
-
-    transform:translateY(-3px);
-
+#logoutBtn:hover {
+    background: #1f1f28;
+    color: #ff4d9e;
 }
 
-.post-image{
-
-    width:100%;
-
-    height:260px;
-
-    object-fit:cover;
-
-    display:block;
-
+/* ===== TOPBAR ===== */
+.topbar {
+    position: fixed;
+    top: 0;
+    left: 220px;
+    right: 0;
+    height: 64px;
+    background: #111115;
+    border-bottom: 1px solid #2a2a32;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0 28px;
+    z-index: 99;
 }
 
-
-
-.welcome-card h1{
-    margin-bottom:10px;
+.topbar-logo {
+    font-size: 22px;
+    font-weight: 800;
+    color: #ff4d9e;
+    letter-spacing: -0.5px;
+    margin-right: 8px;
 }
 
-/* СОЗДАНИЕ ПОСТА */
-
-.create-post h2{
-    margin-bottom:15px;
+.topbar input {
+    width: 320px;
+    height: 38px;
+    border: none;
+    border-radius: 10px;
+    padding: 0 16px;
+    background: #2a2a34;
+    color: #e8e8ec;
+    font-size: 14px;
+    outline: none;
+    transition: background 0.15s;
 }
 
-#create-post{
-    margin-bottom:20px;
+.topbar input::placeholder {
+    color: #666;
 }
 
-#postImage{
-    margin-bottom:15px;
+.topbar input:focus {
+    background: #32323e;
 }
 
-#postText{
-
-    width:100%;
-
-    min-height:120px;
-
-    resize:vertical;
-
-    border:1px solid #ddd;
-
-    border-radius:14px;
-
-    padding:12px;
-
-    margin-top:10px;
-
-    margin-bottom:15px;
-
-    font-size:15px;
-
+.notify-btn {
+    margin-left: auto;
+    border: none;
+    background: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: #a0a0b0;
+    transition: color 0.15s;
+    line-height: 1;
 }
 
-/* КНОПКИ */
-
-#publishBtn,
-.likeBtn,
-.commentBtn{
-
-    background:#ff5ca8;
-
-    color:white;
-
-    border:none;
-
-    border-radius:12px;
-
-    padding:10px 18px;
-
-    cursor:pointer;
-
-    font-size:14px;
-
-    transition:.2s;
-
+.notify-btn:hover {
+    color: #ff4d9e;
 }
 
-#publishBtn:hover,
-.likeBtn:hover,
-.commentBtn:hover{
-
-    opacity:.9;
-
+.topbar-spacer {
+    height: 64px;
 }
 
-/* ПОСТ */
-
-.post img{
-
-    max-width:100%;
-
-    border-radius:14px;
-
-    margin-top:10px;
-
+/* ===== MAIN CONTENT ===== */
+.main-content {
+    margin-left: 220px;
+    width: calc(100% - 220px);
+    padding: 20px 28px 40px;
+    min-height: 100vh;
 }
 
-.post strong{
-    font-size:16px;
+/* ===== WELCOME CARD ===== */
+.welcome-card {
+    background: linear-gradient(135deg, #1f1f2a 0%, #2a1a2a 100%);
+    border: 1px solid #2a2a38;
+    border-radius: 16px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
 }
 
-/* КОММЕНТАРИИ */
-
-.comments-header{
-
-    margin-top:15px;
-
-    margin-bottom:10px;
-
-    font-weight:bold;
-
+.welcome-card h1 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 6px;
 }
 
-.comment-form{
-
-    display:flex;
-
-    gap:10px;
-
-    margin-bottom:15px;
-
+.welcome-card p {
+    font-size: 14px;
+    color: #888;
 }
 
-.commentInput{
-
-    flex:1;
-
-    padding:10px;
-
-    border:1px solid #ddd;
-
-    border-radius:12px;
-
+/* ===== CREATE POST ===== */
+.create-post {
+    background: #1f1f28;
+    border: 1px solid #2a2a38;
+    border-radius: 16px;
+    padding: 22px 24px;
+    margin-bottom: 24px;
 }
 
-.comment{
-
-    background:#f8f8f8;
-
-    border-radius:12px;
-
-    padding:10px;
-
-    margin-bottom:8px;
-
+.create-post h2 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #ccc;
+    margin-bottom: 16px;
 }
 
-/* ЛЕНТА */
-
-.feed-section h2{
-
-    margin-bottom:20px;
-
+#postImage {
+    display: block;
+    margin-bottom: 14px;
+    font-size: 13px;
+    color: #888;
 }
 
-/* МОБИЛЬНАЯ ВЕРСИЯ */
+#postText {
+    width: 100%;
+    min-height: 90px;
+    resize: vertical;
+    background: #2a2a34;
+    border: 1px solid #33333f;
+    border-radius: 12px;
+    padding: 12px 14px;
+    color: #e8e8ec;
+    font-size: 14px;
+    margin-bottom: 14px;
+    font-family: inherit;
+    transition: border-color 0.15s;
+}
 
-@media(max-width:900px){
+#postText::placeholder {
+    color: #555;
+}
 
-    .sidebar{
+#postText:focus {
+    outline: none;
+    border-color: #ff4d9e;
+}
 
-        width:80px;
+/* ===== FEED SECTION ===== */
+.feed-section h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #e8e8ec;
+    margin-bottom: 18px;
+}
 
-        padding:15px;
+/* ===== FEED GRID ===== */
+#feed {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+}
 
+/* ===== POST CARD ===== */
+.post {
+    background: #1f1f28;
+    border: 1px solid #2a2a38;
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.18s, border-color 0.18s;
+    cursor: pointer;
+}
+
+.post:hover {
+    transform: translateY(-3px);
+    border-color: #3a3a4a;
+}
+
+/* Avatar + username row inside post */
+.post > div:first-child {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px 10px;
+}
+
+.post > div:first-child img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 2px solid #ff4d9e;
+}
+
+.post > div:first-child strong {
+    font-size: 14px;
+    font-weight: 600;
+    color: #e8e8ec;
+}
+
+/* Post content text */
+.post > p {
+    font-size: 13px;
+    color: #888;
+    padding: 0 16px 10px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.5;
+}
+
+/* Post image */
+.post-image {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+    display: block;
+    border-radius: 0;
+    margin: 0;
+}
+
+/* Post stats (likes + comments) */
+.post-stats {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px 14px;
+    margin-top: auto;
+}
+
+/* Like button in feed */
+.post-stats .likeBtn {
+    flex: 1;
+    background: #ff4d9e;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 9px 14px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s, background 0.15s;
+    text-align: center;
+}
+
+.post-stats .likeBtn:hover {
+    opacity: 0.85;
+}
+
+/* Comments count in post-stats */
+.post-stats > span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    color: #888;
+    white-space: nowrap;
+}
+
+/* Delete button in feed */
+.deletePostBtn {
+    background: none;
+    border: none;
+    color: #555;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 4px 12px 12px;
+    transition: color 0.15s;
+    text-align: left;
+}
+
+.deletePostBtn:hover {
+    color: #ff4d4d;
+}
+
+/* ===== BUTTONS (general) ===== */
+#publishBtn {
+    background: #ff4d9e;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 10px 22px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+
+#publishBtn:hover {
+    opacity: 0.85;
+}
+
+/* ===== POST MODAL ===== */
+#postModal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.82);
+    backdrop-filter: blur(10px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+#modalContent {
+    width: 88vw;
+    max-width: 1100px;
+    height: 88vh;
+    background: #1f1f28;
+    border: 1px solid #2a2a38;
+    border-radius: 20px;
+    overflow: hidden;
+    display: flex;
+}
+
+#modalImageSide {
+    width: 60%;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+#modalImageSide img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+#modalInfoSide {
+    width: 40%;
+    padding: 28px 24px;
+    overflow-y: auto;
+    background: #1f1f28;
+    border-left: 1px solid #2a2a38;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+#modalInfoSide::-webkit-scrollbar {
+    width: 4px;
+}
+#modalInfoSide::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 4px;
+}
+
+#modalInfoSide h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+#modalInfoSide p {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 14px;
+    line-height: 1.5;
+}
+
+#modalInfoSide hr {
+    border: none;
+    border-top: 1px solid #2a2a38;
+    margin: 14px 0;
+}
+
+#modalInfoSide h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #ccc;
+    margin-bottom: 10px;
+}
+
+/* Modal post-stats */
+#modalInfoSide .post-stats {
+    padding: 0;
+    margin-bottom: 0;
+}
+
+/* ===== COMMENTS ===== */
+.comments {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    margin-bottom: 16px;
+}
+
+.comment {
+    padding: 8px 0;
+    border-bottom: 1px solid #26262f;
+    font-size: 13px;
+    color: #ccc;
+    line-height: 1.5;
+}
+
+.comment strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #e8e8ec;
+    margin-bottom: 2px;
+}
+
+/* ===== COMMENT FORM ===== */
+.comment-form {
+    display: flex;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid #2a2a38;
+}
+
+.comment-form input,
+#modalCommentInput {
+    flex: 1;
+    padding: 9px 14px;
+    background: #2a2a34;
+    border: 1px solid #33333f;
+    border-radius: 10px;
+    color: #e8e8ec;
+    font-size: 13px;
+    font-family: inherit;
+    transition: border-color 0.15s;
+    outline: none;
+}
+
+.comment-form input::placeholder,
+#modalCommentInput::placeholder {
+    color: #555;
+}
+
+.comment-form input:focus,
+#modalCommentInput:focus {
+    border-color: #ff4d9e;
+}
+
+#modalCommentBtn {
+    background: #ff4d9e;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 9px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.15s;
+}
+
+#modalCommentBtn:hover {
+    opacity: 0.85;
+}
+
+/* Delete post button in modal */
+#deleteModalPost {
+    background: none;
+    border: 1px solid #3a2a2a;
+    color: #888;
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    margin-top: 12px;
+    transition: border-color 0.15s, color 0.15s;
+    width: 100%;
+}
+
+#deleteModalPost:hover {
+    border-color: #ff4d4d;
+    color: #ff4d4d;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+    .sidebar {
+        width: 72px;
+        padding: 20px 8px;
+    }
+
+    .logo {
+        font-size: 18px;
+        text-align: center;
+        padding: 0;
+    }
+
+    .sidebar a span,
+    .sidebar button span {
+        display: none;
     }
 
     .sidebar a,
-    .sidebar button{
-
-        justify-content:center;
-
+    .sidebar button {
+        justify-content: center;
+        padding: 12px;
+        gap: 0;
     }
 
-    .logo{
-
-        font-size:18px;
-
-        text-align:center;
-
+    .topbar {
+        left: 72px;
     }
 
-    .main-content{
-
-        margin-left:80px;
-
-        padding:15px;
-
+    .main-content {
+        margin-left: 72px;
+        padding: 16px;
     }
 
-}
-
-.topbar{
-
-    position:fixed;
-
-    top:0;
-    left:240px;
-    right:0;
-
-    height:70px;
-
-    background:#2d313a;
-
-    display:flex;
-
-    align-items:center;
-
-    gap:20px;
-
-    padding:0 30px;
-
-    z-index:1000;
-
-}
-
-.topbar input{
-
-    width:350px;
-
-    height:42px;
-
-    border:none;
-
-    border-radius:12px;
-
-    padding:0 15px;
-
-    background:#444954;
-
-    color:white;
-
-    outline:none;
-
-}
-
-.topbar-right button{
-
-    border:none;
-
-    background:none;
-
-    font-size:22px;
-
-    cursor:pointer;
-
-}
-
-.post img:first-child{
-
-    border-radius:50%;
-
-}
-
-.topbar-logo{
-
-    color:#ff5ca8;
-
-    font-size:32px;
-
-    font-weight:700;
-
-    margin-right:20px;
-
-}
-
-.notify-btn{
-
-    margin-left:auto;
-
-    border:none;
-
-    background:none;
-
-    color:white;
-
-    font-size:24px;
-
-    cursor:pointer;
-
-}
-
-.topbar-spacer{
-    height:90px;
-}
-
-#feed{
-
-    display:grid;
-
-    grid-template-columns:
-        repeat(
-            auto-fill,
-            minmax(350px,1fr)
-        );
-
-    gap:20px;
-
-}
-
-#postModal{
-
-    position:fixed;
-
-    inset:0;
-
-    background:
-        rgba(0,0,0,.7);
-
-    backdrop-filter:
-        blur(8px);
-
-    display:none;
-
-    justify-content:center;
-
-    align-items:center;
-
-    z-index:9999;
-
-}
-
-#modalContent{
-
-    width:90vw;
-
-    height:90vh;
-
-    background:white;
-
-    border-radius:20px;
-
-    overflow:hidden;
-
-    display:flex;
-
-}
-
-#modalImageSide{
-
-    width:60%;
-
-    background:black;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-}
-
-#modalInfoSide{
-
-    width:40%;
-
-    padding:20px;
-
-    overflow-y:auto;
-
-}
-
-#modalImageSide img{
-
-    width:100%;
-
-    height:100%;
-
-    object-fit:contain;
-
-}
-
-.comments{
-
-    margin-top:10px;
-
-}
-
-.comment{
-
-    padding:6px 0;
-
-    border-bottom:1px solid #eee;
-
-    font-size:14px;
-
-}
-
-.post-stats{
-
-    margin-top:15px;
-
-    font-size:15px;
-
-    color:#666;
-
-    font-weight:bold;
-
-}
-
-#modalInfoSide{
-
-    width:40%;
-
-    padding:25px;
-
-    overflow-y:auto;
-
-}
-
-.post p{
-
-    display:-webkit-box;
-
-    -webkit-line-clamp:3;
-
-    -webkit-box-orient:vertical;
-
-    overflow:hidden;
-
-}
-
-.post{
-
-    height:420px;
-
-    display:flex;
-
-    flex-direction:column;
-
+    #modalContent {
+        flex-direction: column;
+        width: 96vw;
+        height: 95vh;
+    }
+
+    #modalImageSide,
+    #modalInfoSide {
+        width: 100%;
+    }
+
+    #modalImageSide {
+        height: 45%;
+    }
+
+    #modalInfoSide {
+        height: 55%;
+        border-left: none;
+        border-top: 1px solid #2a2a38;
+    }
 }
