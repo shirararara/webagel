@@ -346,31 +346,50 @@ document
 
 document
     .querySelectorAll(".post")
-    .forEach(postCard=>{
+    .forEach(postCard => {
 
-        postCard.onclick = ()=>{
+        postCard.onclick = () => {
+
+            const postId =
+                Number(
+                    postCard.dataset.id
+                );
+
+            const post =
+                posts.find(
+                    p => p.id === postId
+                );
+
+            const postComments =
+                commentsData.filter(
+                    comment =>
+                    comment.post_id === postId
+                );
+
+            const postLikes =
+                likesData.filter(
+                    like =>
+                    like.post_id === postId
+                );
+
+            const commentsCount =
+                postComments.length;
+
+            const likesCount =
+                postLikes.length;
 
             const image =
                 postCard.querySelector(
                     ".post-image"
                 );
 
-            if(!image){
-
+            if (!image) {
                 return;
-
             }
-
-            document
-            .getElementById(
-                "modalImageSide"
-            )
-            .innerHTML =
-
-            `<img src="${image.src}">`;
 
             const commentsHtml =
                 postComments.map(comment => `
+
                     <div class="comment">
 
                         <strong>
@@ -382,57 +401,64 @@ document
                         </div>
 
                     </div>
+
                 `).join("");
 
             document
-            .getElementById(
-                "modalInfoSide"
-            )
-            .innerHTML = `
-
-                <h2>
-                    ${post.username}
-                </h2>
-
-                <p>
-                    ${post.content || ""}
-                </p>
-
-                <hr>
-
-                <div class="post-stats">
-
-                    ❤️ ${likesCount}
-
-                    &nbsp;&nbsp;
-
-                    💬 ${commentsCount}
-
-                </div>
-
-                <h3>
-                    Комментарии
-                </h3>
-
-                <div class="comments">
-
-                    ${commentsHtml}
-
-                </div>
-
-            `;
+                .getElementById(
+                    "modalImageSide"
+                )
+                .innerHTML =
+                `<img src="${image.src}">`;
 
             document
-            .getElementById(
-                "postModal"
-            )
-            .style.display =
+                .getElementById(
+                    "modalInfoSide"
+                )
+                .innerHTML = `
+
+                    <h2>
+                        ${post.username}
+                    </h2>
+
+                    <p>
+                        ${post.content || ""}
+                    </p>
+
+                    <hr>
+
+                    <div class="post-stats">
+
+                        ❤️ ${likesCount}
+
+                        &nbsp;&nbsp;
+
+                        💬 ${commentsCount}
+
+                    </div>
+
+                    <h3>
+                        Комментарии
+                    </h3>
+
+                    <div class="comments">
+
+                        ${commentsHtml}
+
+                    </div>
+
+                `;
+
+            document
+                .getElementById(
+                    "postModal"
+                )
+                .style.display =
                 "flex";
 
         };
 
     });
-
 document
     .getElementById(
         "postModal"
