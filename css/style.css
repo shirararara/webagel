@@ -90,11 +90,11 @@ body{
 
     margin-left:240px;
 
-    width:100%;
+    width:calc(100% - 240px);
 
-    max-width:1100px;
+    max-width:none;
 
-    padding:30px;
+    padding:100px 30px 30px 30px;
 
 }
 
@@ -298,34 +298,48 @@ body{
 
 .topbar{
 
-    background:white;
+    position:fixed;
 
-    border-radius:20px;
+    top:0;
+    left:240px;
+    right:0;
 
-    padding:15px 20px;
+    height:70px;
 
-    margin-bottom:20px;
+    background:#2d313a;
 
     display:flex;
 
-    justify-content:space-between;
-
     align-items:center;
 
+    gap:20px;
+
+    padding:0 30px;
+
+    z-index:1000;
+
     box-shadow:
-        0 3px 15px rgba(0,0,0,.06);
+        0 2px 10px rgba(0,0,0,.15);
 
 }
 
 .topbar input{
 
-    width:300px;
+    width:350px;
 
-    padding:10px;
+    height:42px;
 
-    border:1px solid #ddd;
+    border:none;
 
     border-radius:12px;
+
+    padding:0 15px;
+
+    background:#444954;
+
+    color:white;
+
+    outline:none;
 
 }
 
@@ -344,5 +358,33 @@ body{
 .post img:first-child{
 
     border-radius:50%;
+
+}
+
+.topbar-logo{
+
+    color:#ff5ca8;
+
+    font-size:32px;
+
+    font-weight:700;
+
+    margin-right:20px;
+
+}
+
+.notify-btn{
+
+    margin-left:auto;
+
+    border:none;
+
+    background:none;
+
+    color:white;
+
+    font-size:24px;
+
+    cursor:pointer;
 
 }
