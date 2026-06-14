@@ -57,7 +57,7 @@ posts.forEach(post => {
         user &&
         postLikes.some(
             like =>
-            like.user_id === currentUser.id
+            like.user_id === user.id
         );
 
     feed.innerHTML += `
@@ -206,7 +206,7 @@ document
                 )
                 .eq(
                     "user_id",
-                    currentUser.id
+                    user.id
                 )
                 .maybeSingle();
 
@@ -221,7 +221,7 @@ document
                     )
                     .eq(
                         "user_id",
-                        currentUser.id
+                        user.id
                     );
 
             } else {
@@ -234,7 +234,7 @@ document
                             postId,
 
                         user_id:
-                            currentUser.id
+                            user.id
 
                     });
 
@@ -268,7 +268,7 @@ const profileResult =
     await supabase
         .from("profiles")
         .select("*")
-        .eq("id", currentUser.id)
+        .eq("id", user.id)
         .single();
 
 if (profileResult.error) {
