@@ -7,240 +7,352 @@ const feed = document.getElementById("feed");
 
 async function loadFeed() {
 
-    const {
-        data: posts,
-        error
-    } = await supabase
-        .from("posts")
-        .select("*")
-        .order("created_at", {
-            ascending: false
-        });
 
-    if (error) {
-        console.error(error);
-        return;
-    }
+const {
+    data: posts,
+    error
+} = await supabase
+    .from("posts")
+    .select("*")
+    .order("created_at", {
+        ascending: false
+    });
 
-    const {
-        data: { user }
-    } = await supabase.auth.getUser();
+if (error) {
 
-    feed.innerHTML = "";
+    console.error(error);
 
-    posts.forEach(post => {
+    return;
 
-        const canDelete =
-            user &&
-            user.id === post.user_id;
+}
 
-        feed.innerHTML += `
+const {
+    data: likesData
+} = await supabase
+    .from("likes")
+    .select("*");
 
-        <div class="post" data-id="${post.id}">
+const {
+    data: { user }
+} = await supabase.auth.getUser();
 
-            <div>
+feed.innerHTML = "";
 
-                <img
-                src="${post.avatar_url || 'https://placehold.co/50'}"
-                width="50"
-                height="50">
+posts.forEach(post => {
 
-                <strong>
-                    ${post.username || "Unknown"}
-                </strong>
+    const canDelete =
+        user &&
+        user.id === post.user_id;
 
-            </div>
+    const postLikes =
+        likesData.filter(
+            like =>
+            like.post_id === post.id
+        );
 
-            <p>
-                ${post.content || ""}
-            </p>
+    const likesCount =
+        postLikes.length;
 
-            ${
-                post.image_url
-                ?
-                `<img
-                src="${post.image_url}"
-                width="500">`
-                :
-                ""
-            }
+    const isLiked =
+        user &&
+        postLikes.some(
+            like =>
+            like.user_id === user.id
+        );
 
-            <br><br>
+    feed.innerHTML += `
 
-            ${
-                canDelete
-                ?
-                `<button class="deletePostBtn">
-                    🗑 Удалить
-                </button>`
-                :
-                ""
-            }
+    <div class="post" data-id="${post.id}">
 
-            <hr>
+        <div>
+
+            <img
+            src="${post.avatar_url || 'https://placehold.co/50'}"
+            width="50"
+            height="50">
+
+            <strong>
+                ${post.username || "Unknown"}
+            </strong>
 
         </div>
 
-        `;
+        <p>
+            ${post.content || ""}
+        </p>
+
+        ${
+            post.image_url
+            ?
+            `<img
+            src="${post.image_url}"
+            width="500">`
+            :
+            ""
+        }
+
+        <br><br>
+
+        <button
+        class="likeBtn"
+        data-id="${post.id}">
+
+            ${isLiked ? "❤️" : "🤍"}
+
+            ${likesCount}
+
+        </button>
+
+        <br><br>
+
+        ${
+            canDelete
+            ?
+            `<button class="deletePostBtn">
+                🗑 Удалить
+            </button>`
+            :
+            ""
+        }
+
+        <hr>
+
+    </div>
+
+    `;
+
+});
+
+document
+    .querySelectorAll(".deletePostBtn")
+    .forEach(button => {
+
+        button.onclick =
+        async (event) => {
+
+            const postElement =
+                event.target.closest(".post");
+
+            const postId =
+                postElement.dataset.id;
+
+            if (
+                !confirm(
+                    "Удалить пост?"
+                )
+            ) {
+                return;
+            }
+
+            const {
+                error
+            } =
+            await supabase
+                .from("posts")
+                .delete()
+                .eq("id", postId);
+
+            if (error) {
+
+                alert(error.message);
+
+                return;
+
+            }
+
+            loadFeed();
+
+        };
 
     });
 
-    document
-        .querySelectorAll(".deletePostBtn")
-        .forEach(button => {
+document
+    .querySelectorAll(".likeBtn")
+    .forEach(button => {
 
-            button.onclick =
-            async (event) => {
+        button.onclick =
+        async () => {
 
-                const postElement =
-                    event.target.closest(".post");
+            const postId =
+                Number(
+                    button.dataset.id
+                );
 
-                const postId =
-                    postElement.dataset.id;
+            const {
+                data:{user}
+            } =
+            await supabase.auth
+                .getUser();
 
-                if (
-                    !confirm(
-                        "Удалить пост?"
-                    )
-                ) {
-                    return;
-                }
+            if(!user){
 
-                const {
-                    error
-                } =
+                alert(
+                    "Войдите в аккаунт"
+                );
+
+                return;
+
+            }
+
+            const {
+                data: existingLike
+            } =
+            await supabase
+                .from("likes")
+                .select("*")
+                .eq(
+                    "post_id",
+                    postId
+                )
+                .eq(
+                    "user_id",
+                    user.id
+                )
+                .maybeSingle();
+
+            if(existingLike){
+
                 await supabase
-                    .from("posts")
+                    .from("likes")
                     .delete()
-                    .eq("id", postId);
+                    .eq(
+                        "post_id",
+                        postId
+                    )
+                    .eq(
+                        "user_id",
+                        user.id
+                    );
 
-                if (error) {
+            } else {
 
-                    alert(error.message);
+                await supabase
+                    .from("likes")
+                    .insert({
 
-                    return;
+                        post_id:
+                            postId,
 
-                }
+                        user_id:
+                            user.id
 
-                loadFeed();
+                    });
 
-            };
+            }
 
-        });
+            loadFeed();
+
+        };
+
+    });
+```
 
 }
 
 publishBtn.onclick = async () => {
 
-    console.log("Кнопка нажата");
+```
+const {
+    data: { user }
+} = await supabase.auth.getUser();
 
-    const {
-        data: { user }
-    } = await supabase.auth.getUser();
+if (!user) {
 
-    console.log("USER:", user);
+    alert("Нужно войти");
 
-    if (!user) {
+    return;
 
-        alert("Пользователь не найден");
+}
 
-        return;
-
-    }
-
-    const profileResult = await supabase
+const profileResult =
+    await supabase
         .from("profiles")
         .select("*")
         .eq("id", user.id)
         .single();
 
-    console.log("PROFILE:", profileResult);
+if (profileResult.error) {
 
-    if (profileResult.error) {
+    alert(profileResult.error.message);
 
-        alert(profileResult.error.message);
+    return;
 
-        return;
+}
 
-    }
+const profile =
+    profileResult.data;
 
-    const profile = profileResult.data;
+let imageUrl = null;
 
-    let imageUrl = null;
+if (postImage.files.length > 0) {
 
-    if (postImage.files.length > 0) {
+    const file =
+        postImage.files[0];
 
-        const file = postImage.files[0];
+    const extension =
+        file.name.split(".").pop();
 
-        const extension = file.name.split(".").pop();
+    const fileName =
+        `${Date.now()}.${extension}`;
 
-        const fileName =
-            `${Date.now()}.${extension}`;
-
-        const uploadResult =
-            await supabase.storage
-                .from("posts")
-                .upload(fileName, file);
-
-        console.log("UPLOAD:", uploadResult);
-
-        if (uploadResult.error) {
-
-            alert(uploadResult.error.message);
-
-            return;
-
-        }
-
-        const { data } =
-            supabase.storage
-                .from("posts")
-                .getPublicUrl(fileName);
-
-        imageUrl = data.publicUrl;
-
-        console.log("IMAGE URL:", imageUrl);
-
-    }
-
-    const insertResult =
-        await supabase
+    const uploadResult =
+        await supabase.storage
             .from("posts")
-            .insert({
+            .upload(fileName, file);
 
-                user_id: user.id,
+    if (uploadResult.error) {
 
-                username:
-                    profile.username,
-
-                avatar_url:
-                    profile.avatar_url,
-
-                content:
-                    postText.value,
-
-                image_url:
-                    imageUrl
-
-            })
-            .select();
-
-    console.log("INSERT RESULT:", insertResult);
-
-    if (insertResult.error) {
-
-        alert(insertResult.error.message);
+        alert(uploadResult.error.message);
 
         return;
 
     }
 
-    alert("Пост создан");
+    const { data } =
+        supabase.storage
+            .from("posts")
+            .getPublicUrl(fileName);
 
-    postText.value = "";
-    postImage.value = "";
+    imageUrl =
+        data.publicUrl;
 
-    await loadFeed();
+}
+
+const insertResult =
+    await supabase
+        .from("posts")
+        .insert({
+
+            user_id:
+                user.id,
+
+            username:
+                profile.username,
+
+            avatar_url:
+                profile.avatar_url,
+
+            content:
+                postText.value,
+
+            image_url:
+                imageUrl
+
+        });
+
+if (insertResult.error) {
+
+    alert(insertResult.error.message);
+
+    return;
+
+}
+
+postText.value = "";
+postImage.value = "";
+
+await loadFeed();
+
 
 };
 
