@@ -369,13 +369,58 @@ document
 
             `<img src="${image.src}">`;
 
+            const commentsHtml =
+                postComments.map(comment => `
+                    <div class="comment">
+
+                        <strong>
+                            ${comment.username}
+                        </strong>
+
+                        <div>
+                            ${comment.content}
+                        </div>
+
+                    </div>
+                `).join("");
+
             document
             .getElementById(
                 "modalInfoSide"
             )
-            .innerHTML =
+            .innerHTML = `
 
-            postCard.innerHTML;
+                <h2>
+                    ${post.username}
+                </h2>
+
+                <p>
+                    ${post.content || ""}
+                </p>
+
+                <hr>
+
+                <div class="post-stats">
+
+                    ❤️ ${likesCount}
+
+                    &nbsp;&nbsp;
+
+                    💬 ${commentsCount}
+
+                </div>
+
+                <h3>
+                    Комментарии
+                </h3>
+
+                <div class="comments">
+
+                    ${commentsHtml}
+
+                </div>
+
+            `;
 
             document
             .getElementById(
