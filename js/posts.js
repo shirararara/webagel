@@ -62,9 +62,6 @@ posts.forEach(post => {
             comment.post_id === post.id
         );
 
-    const previewComments =
-        postComments.slice(0, 3);
-
     const commentsCount =
         postComments.length;
 
@@ -144,7 +141,7 @@ posts.forEach(post => {
 
         <div class="comments">
 
-            ${previewComments.map(comment => `
+            ${postComments.map(comment => `
                 <div class="comment">
 
                     <strong>
@@ -157,16 +154,6 @@ posts.forEach(post => {
 
                 </div>
             `).join("")}
-
-            ${
-                postComments.length > 3
-                ?
-                `<div class="more-comments">
-                    Еще ${postComments.length - 3} комментариев...
-                </div>`
-                :
-                ""
-            }
 
         </div>
 
