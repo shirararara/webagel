@@ -33,7 +33,7 @@ const {
     .select("*");
 
 const {
-    data: { user }
+    data: { user: currentUser }
 } = await supabase.auth.getUser();
 
 feed.innerHTML = "";
@@ -57,7 +57,7 @@ posts.forEach(post => {
         user &&
         postLikes.some(
             like =>
-            like.user_id === user.id
+            like.user_id === currentUser.id
         );
 
     feed.innerHTML += `
@@ -206,7 +206,7 @@ document
                 )
                 .eq(
                     "user_id",
-                    user.id
+                    currentUser.id
                 )
                 .maybeSingle();
 
@@ -221,7 +221,7 @@ document
                     )
                     .eq(
                         "user_id",
-                        user.id
+                        currentUser.id
                     );
 
             } else {
@@ -234,7 +234,7 @@ document
                             postId,
 
                         user_id:
-                            user.id
+                            currentUser.id
 
                     });
 
@@ -268,7 +268,7 @@ const profileResult =
     await supabase
         .from("profiles")
         .select("*")
-        .eq("id", user.id)
+        .eq("id", currentUser.id)
         .single();
 
 if (profileResult.error) {
