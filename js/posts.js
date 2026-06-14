@@ -344,20 +344,17 @@ document
                 .eq("id", user.id)
                 .single();
 
-            const result =
-                await supabase
-                    .from("comments")
-                    .insert({
+            await supabase
+                .from("comments")
+                .insert({
 
-                        post_id: postId,
-                        user_id: user.id,
-                        username: profile.username,
-                        avatar_url: profile.avatar_url,
-                        content: text
+                    post_id: postId,
+                    user_id: user.id,
+                    username: profile.username,
+                    avatar_url: profile.avatar_url,
+                    content: text
 
-                    });
-
-            console.log(result);
+                });
 
             if(result.error){
 
