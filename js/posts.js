@@ -100,8 +100,8 @@ posts.forEach(post => {
             post.image_url
             ?
             `<img
-            src="${post.image_url}"
-            width="500">`
+            class="post-image"
+            src="${post.image_url}">`
             :
             ""
         }
