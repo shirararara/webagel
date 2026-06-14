@@ -245,13 +245,13 @@ document
         };
 
     });
-```
+
 
 }
 
 publishBtn.onclick = async () => {
 
-```
+
 const {
     data: { user }
 } = await supabase.auth.getUser();
