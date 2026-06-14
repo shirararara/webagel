@@ -371,6 +371,65 @@ document
 
     });
 
+document
+    .querySelectorAll(".post")
+    .forEach(postCard=>{
+
+        postCard.onclick = ()=>{
+
+            const image =
+                postCard.querySelector(
+                    ".post-image"
+                );
+
+            if(!image){
+
+                return;
+
+            }
+
+            document
+            .getElementById(
+                "modalImageSide"
+            )
+            .innerHTML =
+
+            `<img src="${image.src}">`;
+
+            document
+            .getElementById(
+                "modalInfoSide"
+            )
+            .innerHTML =
+
+            postCard.innerHTML;
+
+            document
+            .getElementById(
+                "postModal"
+            )
+            .style.display =
+                "flex";
+
+        };
+
+    });
+
+document
+    .getElementById(
+        "postModal"
+    )
+    .onclick = ()=>{
+
+        document
+        .getElementById(
+            "postModal"
+        )
+        .style.display =
+            "none";
+
+    };
+
 }
 
 publishBtn.onclick = async () => {
