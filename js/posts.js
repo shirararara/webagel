@@ -304,81 +304,87 @@ document
 }
 
 document
-.querySelectorAll(".commentBtn")
-.forEach(button => {
+    .querySelectorAll(".commentBtn")
+    .forEach(button => {
 
-    button.onclick =
-    async () => {
+        button.onclick =
+        async () => {
 
-        const postId =
-            Number(
-                button.dataset.id
-            );
+            const postId =
+                Number(
+                    button.dataset.id
+                );
 
-        const input =
-            document.querySelector(
-                `.commentInput[data-id="${postId}"]`
-            );
+            const input =
+                document.querySelector(
+                    `.commentInput[data-id="${postId}"]`
+                );
 
-        const text =
-            input.value.trim();
+            const text =
+                input.value.trim();
 
-        if(!text){
+            if(!text){
 
-            return;
+                return;
 
-        }
+            }
 
-        const {
-            data:{user}
-        } =
-        await supabase.auth
-            .getUser();
+            const {
+                data:{user}
+            } =
+            await supabase.auth
+                .getUser();
 
-        if(!user){
+            if(!user){
 
-            alert(
-                "Войдите в аккаунт"
-            );
+                alert(
+                    "Войдите в аккаунт"
+                );
 
-            return;
+                return;
 
-        }
+            }
 
-        const {
-            data: profile
-        } =
-        await supabase
-            .from("profiles")
-            .select("*")
-            .eq(
-                "id",
-                user.id
-            )
-            .single();
+            const {
+                data: profile
+            } =
+            await supabase
+                .from("profiles")
+                .select("*")
+                .eq(
+                    "id",
+                    user.id
+                )
+                .single();
 
-        await supabase
-            .from("comments")
-            .insert({
+            const result =
+                await supabase
+                    .from("comments")
+                    .insert({
 
-                post_id:
-                    postId,
+                        post_id: postId,
 
-                user_id:
-                    user.id,
+                        user_id: user.id,
 
-                username:
-                    profile.username,
+                        username: profile.username,
 
-                avatar_url:
-                    profile.avatar_url,
+                        avatar_url: profile.avatar_url,
 
-                content:
-                    text
+                        content: text
 
-            });
+                    });
 
-        loadFeed();
+            console.log(result);
+
+            if (result.error) {
+
+                alert(result.error.message);
+
+                return;
+
+            }
+
+            loadFeed();
 
     };
 
