@@ -94,7 +94,7 @@ body{
 
     max-width:none;
 
-    padding:100px 30px 30px 30px;
+    padding:20px 30px 30px 30px;
 
 }
 
@@ -318,9 +318,6 @@ body{
 
     z-index:1000;
 
-    box-shadow:
-        0 2px 10px rgba(0,0,0,.15);
-
 }
 
 .topbar input{
@@ -387,4 +384,8 @@ body{
 
     cursor:pointer;
 
+}
+
+.topbar-spacer{
+    height:90px;
 }
