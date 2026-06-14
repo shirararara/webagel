@@ -300,9 +300,6 @@ document
 
     });
 
-
-}
-
 document
     .querySelectorAll(".commentBtn")
     .forEach(button => {
@@ -386,9 +383,11 @@ document
 
             loadFeed();
 
-    };
+        };
 
-});
+    });
+
+}
 
 publishBtn.onclick = async () => {
 
