@@ -122,11 +122,13 @@ posts.forEach(post => {
 
         <div class="post-stats">
 
-            ❤️ ${likesCount}
+            <span>
+                ❤️ ${likesCount}
+            </span>
 
-            &nbsp;&nbsp;
-
-            💬 ${commentsCount}
+            <span>
+                💬 ${commentsCount}
+            </span>
 
         </div>
 
@@ -358,11 +360,6 @@ document
                     postCard.dataset.id
                 );
 
-            const postId =
-                Number(
-                    postCard.dataset.id
-                );
-
             const post =
                 posts.find(
                     p => p.id === postId
@@ -386,12 +383,12 @@ document
             const likesCount =
                 postLikes.length;
 
-            const image =
+            const postImage =
                 postCard.querySelector(
                     ".post-image"
                 );
 
-            if (!image) {
+            if (!postImage) {
                 return;
             }
 
@@ -417,7 +414,7 @@ document
                     "modalImageSide"
                 )
                 .innerHTML =
-                `<img src="${image.src}">`;
+                `<img src="${postImage.src}">`;
 
             document
                 .getElementById(
@@ -455,6 +452,39 @@ document
 
                     </div>
 
+                    <hr>
+
+                    <div class="comment-form">
+
+                        <input
+                            id="modalCommentInput"
+                            placeholder="Написать комментарий">
+
+                        <button
+                            id="modalCommentBtn">
+
+                            Отправить
+
+                        </button>
+
+                    </div>
+
+                    ${
+                        currentUser &&
+                        currentUser.id === post.user_id
+                        ?
+                        `
+                        <button
+                            id="deleteModalPost">
+
+                            🗑 Удалить пост
+
+                        </button>
+                        `
+                        :
+                        ""
+                    }
+
                 `;
 
             document
@@ -463,6 +493,89 @@ document
                 )
                 .style.display =
                 "flex";
+
+            const deleteBtn =
+                document.getElementById(
+                    "deleteModalPost"
+                );
+
+            if(deleteBtn){
+
+                deleteBtn.onclick =
+                async ()=>{
+
+                    await supabase
+                        .from("posts")
+                        .delete()
+                        .eq(
+                            "id",
+                            postId
+                        );
+
+                    document
+                        .getElementById(
+                            "postModal"
+                        )
+                        .style.display =
+                        "none";
+
+                    loadFeed();
+
+                };
+
+            }
+
+            document
+            .getElementById(
+                "modalCommentBtn"
+            )
+            .onclick = async () => {
+
+                const text =
+                    document
+                    .getElementById(
+                        "modalCommentInput"
+                    )
+                    .value
+                    .trim();
+
+                if(!text){
+                    return;
+                }
+
+                const {
+                    data:{user}
+                } =
+                await supabase.auth.getUser();
+
+                const {
+                    data:profile
+                } =
+                await supabase
+                    .from("profiles")
+                    .select("*")
+                    .eq("id", user.id)
+                    .single();
+
+                await supabase
+                    .from("comments")
+                    .insert({
+
+                        post_id: postId,
+
+                        user_id: user.id,
+
+                        username: profile.username,
+
+                        avatar_url: profile.avatar_url,
+
+                        content: text
+
+                    });
+
+                loadFeed();
+
+            };
 
         };
 
