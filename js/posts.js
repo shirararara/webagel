@@ -345,10 +345,18 @@ document
     });
 
 document
-    .querySelectorAll(".post")
-    .forEach(postCard => {
+    .querySelectorAll(".post-image")
+    .forEach(image => {
 
-        postCard.onclick = () => {
+        image.onclick = () => {
+
+            const postCard =
+                image.closest(".post");
+
+            const postId =
+                Number(
+                    postCard.dataset.id
+                );
 
             const postId =
                 Number(
