@@ -33,6 +33,12 @@ const {
     .select("*");
 
 const {
+    data: commentsData
+} = await supabase
+    .from("comments")
+    .select("*");
+
+const {
     data: { user: currentUser }
 } = await supabase.auth.getUser();
 
@@ -49,6 +55,15 @@ posts.forEach(post => {
             like =>
             like.post_id === post.id
         );
+
+    const postComments =
+        commentsData.filter(
+            comment =>
+            comment.post_id === post.id
+        );
+
+    const commentsCount =
+        postComments.length;
 
     const likesCount =
         postLikes.length;
@@ -102,6 +117,45 @@ posts.forEach(post => {
             ${likesCount}
 
         </button>
+
+        <br><br>
+
+        <div class="comments-header">
+            💬 Комментарии (${commentsCount})
+        </div>
+
+        <div class="comment-form">
+
+            <input
+                class="commentInput"
+                data-id="${post.id}"
+                placeholder="Написать комментарий">
+
+            <button
+                class="commentBtn"
+                data-id="${post.id}">
+                Отправить
+            </button>
+
+        </div>
+
+        <div class="comments">
+
+            ${postComments.map(comment => `
+                <div class="comment">
+
+                    <strong>
+                        ${comment.username}
+                    </strong>
+
+                    <span>
+                        ${comment.content}
+                    </span>
+
+                </div>
+            `).join("")}
+
+        </div>
 
         <br><br>
 
@@ -248,6 +302,87 @@ document
 
 
 }
+
+document
+.querySelectorAll(".commentBtn")
+.forEach(button => {
+
+    button.onclick =
+    async () => {
+
+        const postId =
+            Number(
+                button.dataset.id
+            );
+
+        const input =
+            document.querySelector(
+                `.commentInput[data-id="${postId}"]`
+            );
+
+        const text =
+            input.value.trim();
+
+        if(!text){
+
+            return;
+
+        }
+
+        const {
+            data:{user}
+        } =
+        await supabase.auth
+            .getUser();
+
+        if(!user){
+
+            alert(
+                "Войдите в аккаунт"
+            );
+
+            return;
+
+        }
+
+        const {
+            data: profile
+        } =
+        await supabase
+            .from("profiles")
+            .select("*")
+            .eq(
+                "id",
+                user.id
+            )
+            .single();
+
+        await supabase
+            .from("comments")
+            .insert({
+
+                post_id:
+                    postId,
+
+                user_id:
+                    user.id,
+
+                username:
+                    profile.username,
+
+                avatar_url:
+                    profile.avatar_url,
+
+                content:
+                    text
+
+            });
+
+        loadFeed();
+
+    };
+
+});
 
 publishBtn.onclick = async () => {
 
