@@ -522,3 +522,35 @@ body{
     font-weight:bold;
 
 }
+
+#modalInfoSide{
+
+    width:40%;
+
+    padding:25px;
+
+    overflow-y:auto;
+
+}
+
+.post p{
+
+    display:-webkit-box;
+
+    -webkit-line-clamp:3;
+
+    -webkit-box-orient:vertical;
+
+    overflow:hidden;
+
+}
+
+.post{
+
+    height:420px;
+
+    display:flex;
+
+    flex-direction:column;
+
+}
