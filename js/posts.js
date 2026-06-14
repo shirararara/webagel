@@ -120,40 +120,13 @@ posts.forEach(post => {
 
         <br><br>
 
-        <div class="comments-header">
-            💬 Комментарии (${commentsCount})
-        </div>
+        <div class="post-stats">
 
-        <div class="comment-form">
+            ❤️ ${likesCount}
 
-            <input
-                class="commentInput"
-                data-id="${post.id}"
-                placeholder="Написать комментарий">
+            &nbsp;&nbsp;
 
-            <button
-                class="commentBtn"
-                data-id="${post.id}">
-                Отправить
-            </button>
-
-        </div>
-
-        <div class="comments">
-
-            ${postComments.map(comment => `
-                <div class="comment">
-
-                    <strong>
-                        ${comment.username}
-                    </strong>
-
-                    <span>
-                        ${comment.content}
-                    </span>
-
-                </div>
-            `).join("")}
+            💬 ${commentsCount}
 
         </div>
 
