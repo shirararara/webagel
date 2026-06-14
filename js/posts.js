@@ -41,8 +41,8 @@ feed.innerHTML = "";
 posts.forEach(post => {
 
     const canDelete =
-        user &&
-        user.id === post.user_id;
+        currentUser &&
+        currentUser.id === post.user_id;
 
     const postLikes =
         likesData.filter(
@@ -54,10 +54,11 @@ posts.forEach(post => {
         postLikes.length;
 
     const isLiked =
-        user &&
+        currentUser &&
         postLikes.some(
             like =>
-            like.user_id === user.id
+            like.user_id === currentUser.id
+    );
         );
 
     feed.innerHTML += `
