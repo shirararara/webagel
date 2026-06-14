@@ -59,7 +59,6 @@ posts.forEach(post => {
             like =>
             like.user_id === currentUser.id
     );
-        );
 
     feed.innerHTML += `
 
