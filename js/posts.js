@@ -321,9 +321,7 @@ document
                 input.value.trim();
 
             if(!text){
-
                 return;
-
             }
 
             const {
@@ -333,13 +331,8 @@ document
                 .getUser();
 
             if(!user){
-
-                alert(
-                    "Войдите в аккаунт"
-                );
-
+                alert("Войдите в аккаунт");
                 return;
-
             }
 
             const {
@@ -348,10 +341,7 @@ document
             await supabase
                 .from("profiles")
                 .select("*")
-                .eq(
-                    "id",
-                    user.id
-                )
+                .eq("id", user.id)
                 .single();
 
             const result =
@@ -360,20 +350,16 @@ document
                     .insert({
 
                         post_id: postId,
-
                         user_id: user.id,
-
                         username: profile.username,
-
                         avatar_url: profile.avatar_url,
-
                         content: text
 
                     });
 
             console.log(result);
 
-            if (result.error) {
+            if(result.error){
 
                 alert(result.error.message);
 
