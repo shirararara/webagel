@@ -1,166 +1,94 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0">
-
-    <title>
-        Webagel
-    </title>
-
-    <link
-        rel="stylesheet"
-        href="css/style.css">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webagel</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
-
 <body>
 
 <div class="app">
 
+    <!-- TOP BAR (dark) -->
+    <header class="topbar">
+        <div class="topbar-logo">
+            <span class="topbar-name">Bagel</span>
+        </div>
+        <button class="notify-btn" title="Уведомления">⚡</button>
+    </header>
+
+    <!-- SIDEBAR -->
     <aside class="sidebar">
-
         <nav>
-
-            <a href="index.html">
-                🏠 Главная
+            <a href="index.html" class="active">
+                <span class="sidebar-icon">✦</span>
+                <span>Рекомендации</span>
             </a>
-
+            <a href="#">
+                <span class="sidebar-icon">📣</span>
+                <span>Уведомления</span>
+            </a>
             <a href="profile.html">
-                👤 Профиль
+                <span class="sidebar-icon">👤</span>
+                <span>Профиль</span>
             </a>
-
             <a href="#">
-                🔍 Поиск
+                <span class="sidebar-icon">🎯</span>
+                <span>Центр авторов</span>
             </a>
-
-            <a href="#">
-                🔔 Уведомления
-            </a>
-
-            <a href="#">
-                ⚙ Настройки
-            </a>
-
         </nav>
 
-        <button id="logoutBtn">
-
-            🚪 Выйти
-
+        <button id="publishFloatBtn">
+            <span>＋</span>
+            <span>Опубликовать</span>
         </button>
 
+        <button id="logoutBtn">
+            <span class="sidebar-icon">🚪</span>
+            <span>Выйти</span>
+        </button>
     </aside>
-    
+
+    <!-- MAIN -->
     <main class="main-content">
-
-        <div class="topbar">
-
-            <div class="topbar-logo">
-                Webagel
-            </div>
-
-            <input
-                type="text"
-                placeholder="Поиск">
-
-            <button class="notify-btn">
-                🔔
-            </button>
-
-        </div>
 
         <div class="topbar-spacer"></div>
 
-        <section class="welcome-card">
+        <!-- Search + filters -->
+        <div class="search-bar-wrapper">
+            <button class="filter-pill">Рекомендации 🩷</button>
+            <button class="filter-pill">Все языки 🩷</button>
+            <input type="text" class="main-search-input" placeholder="Поиск">
+        </div>
 
-            <h1>
-
-                Добро пожаловать в Webagel
-
-            </h1>
-
-            <p>
-
-                Делитесь игровыми моментами с друзьями.
-
-            </p>
-
-        </section>
-
+        <!-- Create post -->
         <section class="create-post">
-
-            <h2>
-
-                Создать публикацию
-
-            </h2>
-
-            <input
-                type="file"
-                id="postImage"
-                accept="image/*">
-
-            <textarea
-                id="postText"
-                placeholder="Что произошло в игре?">
-            </textarea>
-
-            <button id="publishBtn">
-
-                Опубликовать
-
-            </button>
-
+            <h2>Создать публикацию</h2>
+            <input type="file" id="postImage" accept="image/*">
+            <textarea id="postText" placeholder="Что произошло в игре?"></textarea>
+            <button id="publishBtn">Опубликовать</button>
         </section>
 
+        <!-- Feed -->
         <section class="feed-section">
-
-            <h2>
-
-                Лента
-
-            </h2>
-
             <div id="feed"></div>
-
         </section>
 
     </main>
 
 </div>
 
-<script
-    type="module"
-    src="js/app.js">
-</script>
+<script type="module" src="js/app.js"></script>
+<script type="module" src="js/posts.js"></script>
 
-<script
-    type="module"
-    src="js/posts.js">
-</script>
-
+<!-- Post modal -->
 <div id="postModal">
-
     <div id="modalContent">
-
-        <div id="modalImageSide">
-
-        </div>
-
-        <div id="modalInfoSide">
-
-        </div>
-
+        <div id="modalImageSide"></div>
+        <div id="modalInfoSide"></div>
     </div>
-
 </div>
-    
-</body>
 
+</body>
 </html>
