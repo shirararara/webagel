@@ -901,8 +901,8 @@ body:has(.profile) {
     }
 }
 */
-/* ===== MOBILE (до 600px) ===== */
-@media (max-width: 600px) {
+/* ===== MOBILE (до 770px) ===== */
+@media (max-width: 770px) {
 
     /* Топбар */
     .topbar {
