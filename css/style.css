@@ -51,15 +51,11 @@ a {
     gap: 8px;
 }
 
-.topbar-logo::before {
-    content: '';
-    display: inline-block;
-    width: 26px;
-    height: 26px;
+.topbar-logo img {
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
-    background: #555;
-    border: 2px solid #777;
-    flex-shrink: 0;
+    object-fit: cover;
 }
 
 .topbar-divider {
