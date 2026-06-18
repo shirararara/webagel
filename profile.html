@@ -1,68 +1,29 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Профиль | Webagel</title>
-
 <link rel="stylesheet" href="css/style.css">
-
 </head>
 <body>
 
 <div class="profile">
+    <h1>Мой профиль</h1>
 
-<h1>Мой профиль</h1>
-
-<img
-id="avatar"
-class="avatar"
-src="https://placehold.co/150"
-alt="Avatar">
-
-<br><br>
-
-<input
-type="file"
-id="avatarFile"
-accept="image/*">
-
-<br><br>
-
-<input
-id="username"
-placeholder="Имя пользователя">
-
-<br><br>
-
-<textarea
-id="bio"
-placeholder="О себе"></textarea>
-
-<br><br>
-
-<button id="saveBtn">
-
-Сохранить профиль
-
-</button>
-
-<br><br>
-
-<a href="index.html">
-
-← На главную
-
-</a>
-
+    <img id="avatar" class="avatar" src="https://placehold.co/150" alt="Avatar">
+    <br><br>
+    <input type="file" id="avatarFile" accept="image/*">
+    <br><br>
+    <input id="username" type="text" placeholder="Имя пользователя">
+    <br><br>
+    <textarea id="bio" placeholder="О себе"></textarea>
+    <br><br>
+    <button id="saveBtn">Сохранить профиль</button>
+    <br><br>
+    <a href="index.html">← На главную</a>
 </div>
 
-<script
-type="module"
-src="js/profile.js">
-</script>
-
+<script type="module" src="js/profile.js"></script>
 </body>
 </html>
