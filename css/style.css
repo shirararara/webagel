@@ -842,7 +842,7 @@ body:has(.profile) {
     color: #e83d4d;
 }
 
-/* ===== RESPONSIVE ===== */
+/* ===== RESPONSIVE ===== */ /*
 @media (max-width: 900px) {
     .sidebar {
         width: 64px;
@@ -900,7 +900,7 @@ body:has(.profile) {
         border-top: 1px solid #eee;
     }
 }
-
+*/
 /* ===== MOBILE (до 600px) ===== */
 @media (max-width: 600px) {
 
