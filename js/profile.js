@@ -1,6 +1,13 @@
 import { supabase }
 from "./supabase.js";
 
+import { renderUserFeed } from "./feed.js";
+
+import {
+    getFollowersCount,
+    getFollowingCount
+} from "./follows.js";
+
 const avatar =
 document.getElementById(
 "avatar"
@@ -71,6 +78,78 @@ avatar.src =
 currentAvatar;
 
 }
+
+}
+
+/*
+Счётчики подписчиков / подписок
+*/
+
+const followersCountEl =
+document.getElementById(
+"followersCount"
+);
+
+const followingCountEl =
+document.getElementById(
+"followingCount"
+);
+
+async function loadFollowStats() {
+
+const followers =
+await getFollowersCount(user.id);
+
+const following =
+await getFollowingCount(user.id);
+
+followersCountEl.textContent =
+`${followers} подписчиков`;
+
+followingCountEl.textContent =
+`${following} подписок`;
+
+}
+
+loadFollowStats();
+
+/*
+Лента собственных публикаций
+*/
+
+const feed =
+document.getElementById("feed");
+
+const postModal =
+document.getElementById("postModal");
+
+const modalImageSide =
+document.getElementById("modalImageSide");
+
+const modalInfoSide =
+document.getElementById("modalInfoSide");
+
+if (feed) {
+
+renderUserFeed(
+feed,
+user.id,
+{ postModal, modalImageSide, modalInfoSide }
+);
+
+postModal.onclick = () => {
+postModal.style.display = "none";
+};
+
+modalImageSide?.addEventListener(
+"click",
+e => e.stopPropagation()
+);
+
+modalInfoSide?.addEventListener(
+"click",
+e => e.stopPropagation()
+);
 
 }
 
