@@ -81,14 +81,16 @@ posts.forEach(post => {
 
         <div>
 
-            <img
-            src="${post.avatar_url || 'https://placehold.co/50'}"
-            width="50"
-            height="50">
+            <a href="user.html?id=${post.user_id}" class="post-author-link" onclick="event.stopPropagation()">
+                <img
+                src="${post.avatar_url || 'https://placehold.co/50'}"
+                width="50"
+                height="50">
 
-            <strong>
-                ${post.username || "Unknown"}
-            </strong>
+                <strong>
+                    ${post.username || "Unknown"}
+                </strong>
+            </a>
 
         </div>
 
@@ -409,7 +411,9 @@ document
                 .innerHTML = `
 
                     <h2>
-                        ${post.username}
+                        <a href="user.html?id=${post.user_id}" class="modal-author-link">
+                            ${post.username}
+                        </a>
                     </h2>
 
                     <p>
