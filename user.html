@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Профиль пользователя | Webagel</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="profile">
+    <h1 id="pageTitle">Профиль</h1>
+
+    <img id="avatar" class="avatar" src="https://placehold.co/150" alt="Avatar">
+    <br><br>
+    <h2 id="usernameDisplay" class="user-display-name"></h2>
+    <p id="bioDisplay" class="user-bio"></p>
+
+    <div class="follow-stats">
+        <span id="followersCount" class="follow-stat">0 подписчиков</span>
+        <span id="followingCount" class="follow-stat">0 подписок</span>
+    </div>
+
+    <br>
+    <button id="followBtn">Подписаться</button>
+    <br><br>
+    <a href="search.html">🔍 Найти пользователей</a>
+    <br><br>
+    <a href="index.html">← На главную</a>
+
+    <hr class="profile-divider">
+
+    <h2 class="profile-feed-title">Публикации</h2>
+    <div id="feed"></div>
+</div>
+
+<!-- Post modal -->
+<div id="postModal">
+    <div id="modalContent">
+        <div id="modalImageSide"></div>
+        <div id="modalInfoSide"></div>
+    </div>
+</div>
+
+<script type="module" src="js/user.js"></script>
+</body>
+</html>
