@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="icons/logo.png">
+    <title>Поиск пользователей | Webagel</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app">
+
+    <!-- TOP BAR (dark) -->
+    <header class="topbar">
+        <div class="topbar-logo">
+            <img src="icons/logo-transparent.png" alt="Webagel">
+            <span class="topbar-name">Webagel</span>
+        </div>
+        <button class="notify-btn" title="Уведомления">⚡</button>
+    </header>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <nav>
+            <a href="index.html">
+                <span class="sidebar-icon">✦</span>
+                <span>Рекомендации</span>
+            </a>
+            <a href="#">
+                <span class="sidebar-icon">📣</span>
+                <span>Уведомления</span>
+            </a>
+            <a href="profile.html">
+                <span class="sidebar-icon">👤</span>
+                <span>Профиль</span>
+            </a>
+            <a href="search.html" class="active">
+                <span class="sidebar-icon">🔍</span>
+                <span>Поиск</span>
+            </a>
+        </nav>
+
+        <button id="logoutBtn">
+            <span class="sidebar-icon">🚪</span>
+            <span>Выйти</span>
+        </button>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main-content">
+
+        <div class="topbar-spacer"></div>
+
+        <div class="search-bar-wrapper">
+            <input type="text" id="userSearchInput" class="main-search-input" placeholder="Поиск пользователей по имени">
+        </div>
+
+        <section class="user-results-section">
+            <div id="userResults" class="user-results-grid"></div>
+        </section>
+
+    </main>
+
+</div>
+
+<script type="module" src="js/app.js"></script>
+<script type="module" src="js/search.js"></script>
+
+</body>
+</html>
