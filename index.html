@@ -68,14 +68,6 @@
             <input type="text" class="main-search-input" placeholder="Поиск">
         </div>
 
-        <!-- Create post -->
-        <section class="create-post">
-            <h2>Создать публикацию</h2>
-            <input type="file" id="postImage" accept="image/*">
-            <textarea id="postText" placeholder="Что произошло в игре?"></textarea>
-            <button id="publishBtn">Опубликовать</button>
-        </section>
-
         <!-- Feed -->
         <section class="feed-section">
             <div id="feed"></div>
@@ -87,6 +79,29 @@
 
 <script type="module" src="js/app.js"></script>
 <script type="module" src="js/posts.js"></script>
+
+<!-- Create post modal -->
+<div id="createPostModal">
+    <div id="createPostContent">
+        <div id="createPostImageSide">
+            <label id="imageDropZone">
+                <input type="file" id="postImage" accept="image/*">
+                <div id="imagePreview">
+                    <span id="imageDropHint">📷 Нажмите, чтобы добавить фото</span>
+                </div>
+            </label>
+        </div>
+        <div id="createPostInfoSide">
+            <h2>Новая публикация</h2>
+            <hr>
+            <textarea id="postText" placeholder="Что произошло в игре?"></textarea>
+            <div id="createPostActions">
+                <button id="cancelPostBtn">Отмена</button>
+                <button id="publishBtn">Опубликовать</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Post modal -->
 <div id="postModal">
