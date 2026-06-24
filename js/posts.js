@@ -161,6 +161,16 @@ document
                 return;
             }
 
+            await supabase
+                .from("likes")
+                .delete()
+                .eq("post_id", postId);
+
+            await supabase
+                .from("comments")
+                .delete()
+                .eq("post_id", postId);
+
             const {
                 error
             } =
@@ -493,6 +503,16 @@ document
 
                 deleteBtn.onclick =
                 async ()=>{
+
+                    await supabase
+                        .from("likes")
+                        .delete()
+                        .eq("post_id", postId);
+
+                    await supabase
+                        .from("comments")
+                        .delete()
+                        .eq("post_id", postId);
 
                     await supabase
                         .from("posts")
