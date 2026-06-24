@@ -1,9 +1,38 @@
 import { supabase } from "./supabase.js";
 
-const publishBtn = document.getElementById("publishBtn");
-const postImage = document.getElementById("postImage");
-const postText = document.getElementById("postText");
 const feed = document.getElementById("feed");
+
+// Create post modal
+const publishFloatBtn = document.getElementById("publishFloatBtn");
+const createPostModal = document.getElementById("createPostModal");
+const cancelPostBtn   = document.getElementById("cancelPostBtn");
+
+function openCreateModal() {
+    document.getElementById("postText").value = "";
+    document.getElementById("postImage").value = "";
+    const preview = document.getElementById("imagePreview");
+    preview.innerHTML = `<span id="imageDropHint">📷 Нажмите, чтобы добавить фото</span>`;
+    createPostModal.style.display = "flex";
+}
+
+function closeCreateModal() {
+    createPostModal.style.display = "none";
+}
+
+publishFloatBtn.addEventListener("click", openCreateModal);
+cancelPostBtn.addEventListener("click", closeCreateModal);
+
+createPostModal.addEventListener("click", (e) => {
+    if (e.target === createPostModal) closeCreateModal();
+});
+
+document.getElementById("postImage").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    const preview = document.getElementById("imagePreview");
+    preview.innerHTML = `<img src="${url}">`;
+});
 
 async function loadFeed() {
 
@@ -608,19 +637,18 @@ postModal
 
 }
 
-publishBtn.onclick = async () => {
+document.getElementById("publishBtn").onclick = async () => {
 
+const postImage = document.getElementById("postImage");
+const postText  = document.getElementById("postText");
 
 const {
     data: { user }
 } = await supabase.auth.getUser();
 
 if (!user) {
-
     alert("Нужно войти");
-
     return;
-
 }
 
 const profileResult =
@@ -631,28 +659,19 @@ const profileResult =
         .single();
 
 if (profileResult.error) {
-
     alert(profileResult.error.message);
-
     return;
-
 }
 
-const profile =
-    profileResult.data;
+const profile = profileResult.data;
 
 let imageUrl = null;
 
 if (postImage.files.length > 0) {
 
-    const file =
-        postImage.files[0];
-
-    const extension =
-        file.name.split(".").pop();
-
-    const fileName =
-        `${Date.now()}.${extension}`;
+    const file      = postImage.files[0];
+    const extension = file.name.split(".").pop();
+    const fileName  = `${Date.now()}.${extension}`;
 
     const uploadResult =
         await supabase.storage
@@ -660,11 +679,8 @@ if (postImage.files.length > 0) {
             .upload(fileName, file);
 
     if (uploadResult.error) {
-
         alert(uploadResult.error.message);
-
         return;
-
     }
 
     const { data } =
@@ -672,8 +688,7 @@ if (postImage.files.length > 0) {
             .from("posts")
             .getPublicUrl(fileName);
 
-    imageUrl =
-        data.publicUrl;
+    imageUrl = data.publicUrl;
 
 }
 
@@ -681,37 +696,20 @@ const insertResult =
     await supabase
         .from("posts")
         .insert({
-
-            user_id:
-                user.id,
-
-            username:
-                profile.username,
-
-            avatar_url:
-                profile.avatar_url,
-
-            content:
-                postText.value,
-
-            image_url:
-                imageUrl
-
+            user_id:    user.id,
+            username:   profile.username,
+            avatar_url: profile.avatar_url,
+            content:    postText.value,
+            image_url:  imageUrl
         });
 
 if (insertResult.error) {
-
     alert(insertResult.error.message);
-
     return;
-
 }
 
-postText.value = "";
-postImage.value = "";
-
+closeCreateModal();
 await loadFeed();
-
 
 };
 
