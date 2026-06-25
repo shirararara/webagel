@@ -567,7 +567,7 @@ body:has(.profile) {
 }
 
 .profile {
-    max-width: 760px;
+    max-width: 1060px;
     margin: 60px auto 0;
     padding: 32px 28px 60px;
     background: transparent;
