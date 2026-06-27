@@ -63,9 +63,53 @@
 
         <!-- Search + filters -->
         <div class="search-bar-wrapper">
-            <button class="filter-pill">Рекомендации 🩷</button>
-            <button class="filter-pill">Все языки 🩷</button>
-            <input type="text" class="main-search-input" placeholder="Поиск">
+            <div class="dropdown-wrapper" id="filterDropdownWrapper">
+                <button class="filter-pill" id="filterBtn">Фильтр ▾</button>
+                <div class="dropdown-menu" id="filterMenu">
+                    <label class="dropdown-item">
+                        <input type="checkbox" id="filterFollowing">
+                        <span>Только подписки</span>
+                    </label>
+                    <label class="dropdown-item">
+                        <input type="checkbox" id="filterOnlyGif">
+                        <span>Только GIF</span>
+                    </label>
+                    <label class="dropdown-item">
+                        <input type="checkbox" id="filterNoGif">
+                        <span>Без GIF</span>
+                    </label>
+                </div>
+            </div>
+            <div class="dropdown-wrapper" id="sortDropdownWrapper">
+                <button class="filter-pill" id="sortBtn">Сортировка ▾</button>
+                <div class="dropdown-menu" id="sortMenu">
+                    <label class="dropdown-item">
+                        <input type="radio" name="sortOrder" value="newest" checked>
+                        <span>Недавние</span>
+                    </label>
+                    <label class="dropdown-item">
+                        <input type="radio" name="sortOrder" value="oldest">
+                        <span>Давние</span>
+                    </label>
+                    <label class="dropdown-item">
+                        <input type="radio" name="sortOrder" value="most_likes">
+                        <span>Много лайков</span>
+                    </label>
+                    <label class="dropdown-item">
+                        <input type="radio" name="sortOrder" value="least_likes">
+                        <span>Мало лайков</span>
+                    </label>
+                    <label class="dropdown-item">
+                        <input type="radio" name="sortOrder" value="most_comments">
+                        <span>Много комментариев</span>
+                    </label>
+                    <label class="dropdown-item">
+                        <input type="radio" name="sortOrder" value="least_comments">
+                        <span>Мало комментариев</span>
+                    </label>
+                </div>
+            </div>
+            <input type="text" class="main-search-input" id="mainSearchInput" placeholder="Поиск по публикациям">
         </div>
 
         <!-- Feed -->
