@@ -308,6 +308,7 @@ a {
     color: #333;
     transition: background 0.1s;
     user-select: none;
+    line-height: 1;
 }
 
 .dropdown-item:hover {
@@ -316,11 +317,53 @@ a {
 
 .dropdown-item input[type="checkbox"],
 .dropdown-item input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
     accent-color: #ff4e8b;
     width: 16px;
     height: 16px;
+    min-width: 16px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
     cursor: pointer;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.15s, background 0.15s;
+    margin: 0;
+    position: relative;
+}
+
+.dropdown-item input[type="radio"] {
+    border-radius: 50%;
+}
+
+.dropdown-item input[type="checkbox"]:checked,
+.dropdown-item input[type="radio"]:checked {
+    background: #ff4e8b;
+    border-color: #ff4e8b;
+}
+
+.dropdown-item input[type="checkbox"]:checked::after {
+    content: "";
+    position: absolute;
+    width: 4px;
+    height: 8px;
+    border: 2px solid #fff;
+    border-top: none;
+    border-left: none;
+    transform: rotate(45deg) translate(-1px, -1px);
+}
+
+.dropdown-item input[type="radio"]:checked::after {
+    content: "";
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: #fff;
+    border-radius: 50%;
 }
 
 /* ===== WELCOME CARD (simplified) ===== */
