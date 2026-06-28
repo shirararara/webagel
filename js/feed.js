@@ -1,5 +1,23 @@
 import { supabase } from "./supabase.js";
 
+// ===== ФОРМАТИРОВАНИЕ ВРЕМЕНИ =====
+function formatTime(dateStr) {
+    if (!dateStr) return "";
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diff = Math.floor((now - date) / 1000);
+
+    if (diff < 60)             return "только что";
+    if (diff < 3600)           return `${Math.floor(diff / 60)} мин. назад`;
+    if (diff < 86400)          return `${Math.floor(diff / 3600)} ч. назад`;
+    if (diff < 86400 * 7)      return `${Math.floor(diff / 86400)} д. назад`;
+
+    return date.toLocaleDateString("ru-RU", {
+        day: "numeric", month: "long", year: "numeric",
+        hour: "2-digit", minute: "2-digit"
+    });
+}
+
 /*
 Переиспользуемый рендер ленты постов конкретного пользователя.
 Используется на странице своего профиля (profile.html)
@@ -90,6 +108,7 @@ export async function renderUserFeed(containerEl, targetUserId, modalEls) {
                         ${post.username || "Unknown"}
                     </strong>
                 </a>
+                <span class="post-time">🕐 ${formatTime(post.created_at)}</span>
             </div>
 
             <p>
@@ -238,6 +257,7 @@ export async function renderUserFeed(containerEl, targetUserId, modalEls) {
                     const commentsHtml = postComments.map(comment => `
                         <div class="comment">
                             <strong>${comment.username}</strong>
+                            <span class="comment-time">🕐 ${formatTime(comment.created_at)}</span>
                             <div>${comment.content}</div>
                         </div>
                     `).join("");
@@ -251,6 +271,7 @@ export async function renderUserFeed(containerEl, targetUserId, modalEls) {
                                 ${post.username}
                             </a>
                         </h2>
+                        <div class="post-time">🕐 ${formatTime(post.created_at)}</div>
                         <p>${post.content || ""}</p>
                         <hr>
                         <div class="post-stats">
