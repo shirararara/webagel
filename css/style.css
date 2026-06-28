@@ -824,7 +824,21 @@ body:has(.profile) {
     margin-bottom: 2px;
 }
 
-/* ===== COMMENT FORM ===== */
+/* ===== TIMESTAMPS ===== */
+.post-time {
+    display: block;
+    font-size: 11px;
+    color: #999;
+    margin-top: 4px;
+    margin-bottom: 6px;
+}
+
+.comment-time {
+    display: block;
+    font-size: 11px;
+    color: #bbb;
+    margin-bottom: 2px;
+}
 .comment-form {
     display: flex;
     gap: 8px;
