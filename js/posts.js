@@ -1,5 +1,23 @@
 import { supabase } from "./supabase.js";
 
+// ===== ФОРМАТИРОВАНИЕ ВРЕМЕНИ =====
+function formatTime(dateStr) {
+    if (!dateStr) return "";
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diff = Math.floor((now - date) / 1000); // секунды
+
+    if (diff < 60)             return "только что";
+    if (diff < 3600)           return `${Math.floor(diff / 60)} мин. назад`;
+    if (diff < 86400)          return `${Math.floor(diff / 3600)} ч. назад`;
+    if (diff < 86400 * 7)      return `${Math.floor(diff / 86400)} д. назад`;
+
+    return date.toLocaleDateString("ru-RU", {
+        day: "numeric", month: "long", year: "numeric",
+        hour: "2-digit", minute: "2-digit"
+    });
+}
+
 const feed = document.getElementById("feed");
 
 // Create post modal
@@ -175,6 +193,7 @@ function renderPosts(posts) {
                     <img src="${post.avatar_url || 'https://placehold.co/50'}" width="50" height="50">
                     <strong>${post.username || "Unknown"}</strong>
                 </a>
+                <span class="post-time">🕐 ${formatTime(post.created_at)}</span>
             </div>
             <p>${post.content || ""}</p>
             ${post.image_url ? `<img class="post-image" src="${post.image_url}">` : ""}
@@ -242,6 +261,7 @@ function renderPosts(posts) {
             const commentsHtml = postComments.map(comment => `
                 <div class="comment">
                     <strong>${comment.username}</strong>
+                    <span class="comment-time">🕐 ${formatTime(comment.created_at)}</span>
                     <div>${comment.content}</div>
                 </div>
             `).join("");
@@ -251,6 +271,7 @@ function renderPosts(posts) {
                 <h2>
                     <a href="user.html?id=${post.user_id}" class="modal-author-link">${post.username}</a>
                 </h2>
+                <div class="post-time">🕐 ${formatTime(post.created_at)}</div>
                 <p>${post.content || ""}</p>
                 <hr>
                 <div class="post-stats">❤️ ${likesCount} &nbsp;&nbsp; 💬 ${commentsCount}</div>
