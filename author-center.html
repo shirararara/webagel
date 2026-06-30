@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="icons/logo.png">
+    <title>Центр авторов | Webagel</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app">
+
+    <!-- TOP BAR (dark) -->
+    <header class="topbar">
+        <div class="topbar-logo">
+            <img src="icons/logo-transparent.png" alt="Webagel">
+            <span class="topbar-name">Webagel</span>
+        </div>
+        <button class="notify-btn" title="Уведомления">⚡</button>
+    </header>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <nav>
+            <a href="index.html">
+                <span class="sidebar-icon">✦</span>
+                <span>Рекомендации</span>
+            </a>
+            <a href="#">
+                <span class="sidebar-icon">📣</span>
+                <span>Уведомления</span>
+            </a>
+            <a href="profile.html">
+                <span class="sidebar-icon">👤</span>
+                <span>Профиль</span>
+            </a>
+            <a href="search.html">
+                <span class="sidebar-icon">🔍</span>
+                <span>Поиск</span>
+            </a>
+            <a href="author-center.html" class="active">
+                <span class="sidebar-icon">🎯</span>
+                <span>Центр авторов</span>
+            </a>
+        </nav>
+
+        <button id="logoutBtn">
+            <span class="sidebar-icon">🚪</span>
+            <span>Выйти</span>
+        </button>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main-content">
+
+        <div class="topbar-spacer"></div>
+
+        <div class="analytics-wrap">
+
+            <div class="analytics-header">
+                <div>
+                    <h1>Центр авторов</h1>
+                    <p class="analytics-subtitle">Аналитика вашего профиля и публикаций</p>
+                </div>
+                <div class="analytics-user" id="analyticsUser">
+                    <img id="analyticsAvatar" src="https://placehold.co/50" alt="">
+                    <span id="analyticsUsername">—</span>
+                </div>
+            </div>
+
+            <!-- Real stats -->
+            <section class="stat-grid" id="statGrid">
+                <div class="stat-card">
+                    <span class="stat-icon">📝</span>
+                    <span class="stat-value" id="statPosts">—</span>
+                    <span class="stat-label">Публикаций</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">❤️</span>
+                    <span class="stat-value" id="statLikes">—</span>
+                    <span class="stat-label">Лайков получено</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">💬</span>
+                    <span class="stat-value" id="statComments">—</span>
+                    <span class="stat-label">Комментариев получено</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">👥</span>
+                    <span class="stat-value" id="statFollowers">—</span>
+                    <span class="stat-label">Подписчиков</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">👤</span>
+                    <span class="stat-value" id="statFollowing">—</span>
+                    <span class="stat-label">Подписок</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">📈</span>
+                    <span class="stat-value" id="statEngagement">—</span>
+                    <span class="stat-label">Реакций на пост</span>
+                </div>
+            </section>
+
+            <!-- Activity chart (real, based on posts created_at) -->
+            <section class="analytics-section">
+                <h2>Активность публикаций <span class="badge-demo-soft">за 7 дней</span></h2>
+                <div class="chart-bars" id="postsChart"></div>
+            </section>
+
+            <!-- Top post -->
+            <section class="analytics-section">
+                <h2>Лучшая публикация</h2>
+                <div id="topPostCard" class="top-post-card">
+                    <p class="empty-feed">Пока нет публикаций для анализа</p>
+                </div>
+            </section>
+
+            <!-- Conditional / illustrative analytics -->
+            <section class="analytics-section">
+                <h2>Просмотры профиля <span class="badge-demo">демо-данные</span></h2>
+                <p class="analytics-note">Этот раздел показывает условную аналитику для демонстрации — реальный учёт просмотров профиля пока не ведётся.</p>
+                <div class="chart-bars" id="viewsChart"></div>
+            </section>
+
+            <section class="analytics-section">
+                <h2>Источники аудитории <span class="badge-demo">демо-данные</span></h2>
+                <div class="audience-list" id="audienceList"></div>
+            </section>
+
+        </div>
+
+    </main>
+
+</div>
+
+<script type="module" src="js/app.js"></script>
+<script type="module" src="js/author-center.js"></script>
+
+</body>
+</html>
