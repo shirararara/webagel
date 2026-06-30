@@ -37,7 +37,7 @@ function formatTime(dateStr) {
 export async function notifyLike(recipientId, actorId, postId) {
     if (!recipientId || !actorId || recipientId === actorId) return;
 
-    const { error } = await supabase.from("notifications").upsert({
+    await supabase.from("notifications").upsert({
         recipient_id: recipientId,
         actor_id:     actorId,
         type:         "like",
@@ -46,26 +46,22 @@ export async function notifyLike(recipientId, actorId, postId) {
         is_read:      false,
         created_at:   new Date().toISOString()
     }, { onConflict: "recipient_id,actor_id,dedupe_key" });
-
-    if (error) console.error("notifyLike error:", error);
 }
 
 export async function removeLikeNotification(recipientId, actorId, postId) {
     if (!recipientId || !actorId) return;
 
-    const { error } = await supabase.from("notifications")
+    await supabase.from("notifications")
         .delete()
         .eq("recipient_id", recipientId)
         .eq("actor_id", actorId)
         .eq("dedupe_key", `like:${postId}`);
-
-    if (error) console.error("removeLikeNotification error:", error);
 }
 
 export async function notifyFollow(recipientId, actorId) {
     if (!recipientId || !actorId || recipientId === actorId) return;
 
-    const { error } = await supabase.from("notifications").upsert({
+    await supabase.from("notifications").upsert({
         recipient_id: recipientId,
         actor_id:     actorId,
         type:         "follow",
@@ -73,26 +69,22 @@ export async function notifyFollow(recipientId, actorId) {
         is_read:      false,
         created_at:   new Date().toISOString()
     }, { onConflict: "recipient_id,actor_id,dedupe_key" });
-
-    if (error) console.error("notifyFollow error:", error);
 }
 
 export async function removeFollowNotification(recipientId, actorId) {
     if (!recipientId || !actorId) return;
 
-    const { error } = await supabase.from("notifications")
+    await supabase.from("notifications")
         .delete()
         .eq("recipient_id", recipientId)
         .eq("actor_id", actorId)
         .eq("dedupe_key", "follow");
-
-    if (error) console.error("removeFollowNotification error:", error);
 }
 
 export async function notifyComment(recipientId, actorId, postId, text) {
     if (!recipientId || !actorId || recipientId === actorId) return;
 
-    const { error } = await supabase.from("notifications").insert({
+    await supabase.from("notifications").insert({
         recipient_id: recipientId,
         actor_id:     actorId,
         type:         "comment",
@@ -100,15 +92,12 @@ export async function notifyComment(recipientId, actorId, postId, text) {
         preview_text: (text || "").slice(0, 80),
         is_read:      false
     });
-
-    if (error) console.error("notifyComment error:", error);
 }
 
 /* Подчищаем уведомления, когда пост удалён */
 export async function removeNotificationsForPost(postId) {
     if (!postId) return;
-    const { error } = await supabase.from("notifications").delete().eq("post_id", postId);
-    if (error) console.error("removeNotificationsForPost error:", error);
+    await supabase.from("notifications").delete().eq("post_id", postId);
 }
 
 /*
@@ -120,7 +109,6 @@ UI: ВЫПАДАЮЩАЯ ПАНЕЛЬ УВЕДОМЛЕНИЙ
 */
 
 const { data: { user: currentUser } } = await supabase.auth.getUser();
-console.log("notifications.js: currentUser =", currentUser?.id || null);
 
 const notifyBtn       = document.getElementById("notifyBtn");
 const notifSidebarLink = document.getElementById("notifSidebarLink");
@@ -206,7 +194,7 @@ async function fetchNotifications() {
         .order("created_at", { ascending: false })
         .limit(30);
 
-    if (error) { console.error(error); return []; }
+    if (error) return [];
     return data || [];
 }
 
@@ -286,13 +274,11 @@ async function markAllRead() {
 }
 
 async function refreshBadge() {
-    const { count, error } = await supabase
+    const { count } = await supabase
         .from("notifications")
         .select("*", { count: "exact", head: true })
         .eq("recipient_id", currentUser.id)
         .eq("is_read", false);
-
-    if (error) console.error("refreshBadge error:", error);
 
     [document.getElementById("notifyBadgeTop"), document.getElementById("notifyBadgeSidebar")]
         .forEach(badge => {
