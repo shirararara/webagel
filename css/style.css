@@ -97,6 +97,144 @@ a {
     border-color: #aaa;
 }
 
+/* ===== NOTIFICATION BADGE (unread count) ===== */
+.notify-btn {
+    position: relative;
+}
+
+.notify-badge {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: #ff4e8b;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1;
+    border: 2px solid #2e2e32;
+}
+
+.sidebar a {
+    position: relative;
+}
+
+.notify-badge-sidebar {
+    position: static;
+    margin-left: auto;
+    border: none;
+}
+
+/* ===== NOTIFICATIONS PANEL (dropdown, opened from bell or sidebar item) ===== */
+.notifications-panel {
+    display: none;
+    position: fixed;
+    width: 340px;
+    max-height: 440px;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.18);
+    z-index: 500;
+    overflow: hidden;
+    flex-direction: column;
+    animation: dropdownFadeIn 0.15s ease;
+}
+
+.notifications-panel.open {
+    display: flex;
+}
+
+.notifications-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    font-weight: 700;
+    font-size: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.notifications-panel-header button {
+    border: none;
+    background: none;
+    color: #ff4e8b;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.notifications-list {
+    overflow-y: auto;
+    flex: 1;
+}
+
+.notifications-empty {
+    padding: 24px 16px;
+    text-align: center;
+    color: #888;
+    font-size: 13px;
+}
+
+.notification-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f3f3f3;
+    color: inherit;
+    transition: background 0.1s;
+}
+
+.notification-item:hover {
+    background: #fdf0f5;
+}
+
+.notification-item img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.notification-item.unread {
+    background: #fff6fa;
+}
+
+.notification-item.unread::after {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ff4e8b;
+    flex-shrink: 0;
+    margin-top: 6px;
+}
+
+.notification-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.notification-text {
+    font-size: 13px;
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+.notification-time {
+    font-size: 11px;
+    color: #999;
+}
+
 .topbar-spacer {
     height: 52px;
 }
