@@ -17,7 +17,7 @@
             <img src="icons/logo-transparent.png" alt="Webagel">
             <span class="topbar-name">Webagel</span>
         </div>
-        <button class="notify-btn" title="Уведомления">⚡</button>
+        <button class="notify-btn" id="notifyBtn" title="Уведомления">⚡<span class="notify-badge" id="notifyBadgeTop"></span></button>
     </header>
 
     <!-- SIDEBAR -->
@@ -27,9 +27,10 @@
                 <span class="sidebar-icon">✦</span>
                 <span>Рекомендации</span>
             </a>
-            <a href="#">
+            <a href="#" id="notifSidebarLink">
                 <span class="sidebar-icon">📣</span>
                 <span>Уведомления</span>
+                <span class="notify-badge notify-badge-sidebar" id="notifyBadgeSidebar"></span>
             </a>
             <a href="profile.html">
                 <span class="sidebar-icon">👤</span>
@@ -122,6 +123,7 @@
 </div>
 
 <script type="module" src="js/app.js"></script>
+<script type="module" src="js/notifications.js"></script>
 <script type="module" src="js/posts.js"></script>
 
 <!-- Create post modal -->
