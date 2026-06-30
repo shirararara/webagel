@@ -1,4 +1,5 @@
 import { supabase } from "./supabase.js";
+import { notifyFollow, removeFollowNotification } from "./notifications.js";
 
 /* Количество подписчиков пользователя (на кого подписаны = following_id) */
 export async function getFollowersCount(userId) {
@@ -40,22 +41,34 @@ export async function isFollowing(currentUserId, targetUserId) {
 /* Подписаться */
 export async function followUser(currentUserId, targetUserId) {
 
-    return await supabase
+    const result = await supabase
         .from("follows")
         .insert({
             follower_id: currentUserId,
             following_id: targetUserId
         });
+
+    if (!result.error) {
+        await notifyFollow(targetUserId, currentUserId);
+    }
+
+    return result;
 }
 
 /* Отписаться */
 export async function unfollowUser(currentUserId, targetUserId) {
 
-    return await supabase
+    const result = await supabase
         .from("follows")
         .delete()
         .eq("follower_id", currentUserId)
         .eq("following_id", targetUserId);
+
+    if (!result.error) {
+        await removeFollowNotification(targetUserId, currentUserId);
+    }
+
+    return result;
 }
 
 /* Список профилей подписчиков пользователя */
