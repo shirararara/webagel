@@ -1,4 +1,5 @@
 import { supabase } from "./supabase.js";
+import { notifyLike, removeLikeNotification, notifyComment, removeNotificationsForPost } from "./notifications.js";
 
 // ===== ФОРМАТИРОВАНИЕ ВРЕМЕНИ =====
 function formatTime(dateStr) {
@@ -220,6 +221,7 @@ function renderPosts(posts) {
             await supabase.from("comments").delete().eq("post_id", postId);
             const { error } = await supabase.from("posts").delete().eq("id", postId);
             if (error) { alert(error.message); return; }
+            await removeNotificationsForPost(postId);
 
             await loadFeed();
         };
@@ -232,14 +234,18 @@ function renderPosts(posts) {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) { alert("Войдите в аккаунт"); return; }
 
+            const post = allPosts.find(p => p.id === postId);
+
             const { data: existingLike } = await supabase
                 .from("likes").select("*")
                 .eq("post_id", postId).eq("user_id", user.id).maybeSingle();
 
             if (existingLike) {
                 await supabase.from("likes").delete().eq("post_id", postId).eq("user_id", user.id);
+                if (post) await removeLikeNotification(post.user_id, user.id, postId);
             } else {
                 await supabase.from("likes").insert({ post_id: postId, user_id: user.id });
+                if (post) await notifyLike(post.user_id, user.id, postId);
             }
 
             await loadFeed();
@@ -295,6 +301,7 @@ function renderPosts(posts) {
                     await supabase.from("likes").delete().eq("post_id", postId);
                     await supabase.from("comments").delete().eq("post_id", postId);
                     await supabase.from("posts").delete().eq("id", postId);
+                    await removeNotificationsForPost(postId);
                     document.getElementById("postModal").style.display = "none";
                     await loadFeed();
                 };
@@ -310,6 +317,7 @@ function renderPosts(posts) {
                     post_id: postId, user_id: user.id,
                     username: profile.username, avatar_url: profile.avatar_url, content: text
                 });
+                await notifyComment(post.user_id, user.id, postId, text);
                 await loadFeed();
             };
         };
