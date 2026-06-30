@@ -1437,7 +1437,8 @@ body:has(.profile) {
 
 /* ===== AUTHOR CENTER (Центр авторов) ===== */
 .analytics-wrap {
-    max-width: 980px;
+    max-width: 1080px;
+    margin: auto;
 }
 
 .analytics-header {
