@@ -1,4 +1,5 @@
 import { supabase } from "./supabase.js";
+import { notifyLike, removeLikeNotification, notifyComment, removeNotificationsForPost } from "./notifications.js";
 
 // ===== ФОРМАТИРОВАНИЕ ВРЕМЕНИ =====
 function formatTime(dateStr) {
@@ -175,6 +176,8 @@ export async function renderUserFeed(containerEl, targetUserId, modalEls) {
                     return;
                 }
 
+                await removeNotificationsForPost(postId);
+
                 renderUserFeed(containerEl, targetUserId, modalEls);
             };
 
@@ -196,6 +199,8 @@ export async function renderUserFeed(containerEl, targetUserId, modalEls) {
                     return;
                 }
 
+                const post = posts.find(p => p.id === postId);
+
                 const { data: existingLike } = await supabase
                     .from("likes")
                     .select("*")
@@ -209,6 +214,7 @@ export async function renderUserFeed(containerEl, targetUserId, modalEls) {
                         .delete()
                         .eq("post_id", postId)
                         .eq("user_id", user.id);
+                    if (post) await removeLikeNotification(post.user_id, user.id, postId);
                 } else {
                     await supabase
                         .from("likes")
@@ -216,6 +222,7 @@ export async function renderUserFeed(containerEl, targetUserId, modalEls) {
                             post_id: postId,
                             user_id: user.id
                         });
+                    if (post) await notifyLike(post.user_id, user.id, postId);
                 }
 
                 renderUserFeed(containerEl, targetUserId, modalEls);
@@ -306,6 +313,8 @@ export async function renderUserFeed(containerEl, targetUserId, modalEls) {
                                 .delete()
                                 .eq("id", postId);
 
+                            await removeNotificationsForPost(postId);
+
                             modalEls.postModal.style.display = "none";
                             renderUserFeed(containerEl, targetUserId, modalEls);
                         };
@@ -341,6 +350,8 @@ export async function renderUserFeed(containerEl, targetUserId, modalEls) {
                                 avatar_url: profile.avatar_url,
                                 content: text
                             });
+
+                        await notifyComment(post.user_id, user.id, postId, text);
 
                         renderUserFeed(containerEl, targetUserId, modalEls);
                     };
