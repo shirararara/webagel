@@ -88,6 +88,11 @@
                     <span class="stat-label">Комментариев получено</span>
                 </div>
                 <div class="stat-card">
+                    <span class="stat-icon">👁</span>
+                    <span class="stat-value" id="statViews">—</span>
+                    <span class="stat-label">Просмотров получено</span>
+                </div>
+                <div class="stat-card">
                     <span class="stat-icon">👥</span>
                     <span class="stat-value" id="statFollowers">—</span>
                     <span class="stat-label">Подписчиков</span>
@@ -118,10 +123,9 @@
                 </div>
             </section>
 
-            <!-- Conditional / illustrative analytics -->
+            <!-- Real views (post_views table, 1 view per user per post per hour) -->
             <section class="analytics-section">
-                <h2>Просмотры профиля <span class="badge-demo">демо-данные</span></h2>
-                <p class="analytics-note">Этот раздел показывает условную аналитику для демонстрации — реальный учёт просмотров профиля пока не ведётся.</p>
+                <h2>Просмотры публикаций <span class="badge-demo-soft">за 7 дней</span></h2>
                 <div class="chart-bars" id="viewsChart"></div>
             </section>
 
