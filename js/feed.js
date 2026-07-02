@@ -1,5 +1,6 @@
 import { supabase } from "./supabase.js";
 import { notifyLike, removeLikeNotification, notifyComment, removeNotificationsForPost } from "./notifications.js";
+import { fetchViewsForPosts, observeViews } from "./views.js";
 
 // ===== ФОРМАТИРОВАНИЕ ВРЕМЕНИ =====
 function formatTime(dateStr) {
@@ -61,6 +62,12 @@ export async function renderUserFeed(containerEl, targetUserId, modalEls) {
     const {
         data: { user: currentUser }
     } = await supabase.auth.getUser();
+
+    const viewsData = await fetchViewsForPosts(posts.map(p => p.id));
+
+    function viewsCountFor(postId) {
+        return viewsData.filter(v => v.post_id === postId).length;
+    }
 
     containerEl.innerHTML = "";
 
@@ -132,6 +139,10 @@ export async function renderUserFeed(containerEl, targetUserId, modalEls) {
                 <span>
                     💬 ${commentsCount}
                 </span>
+
+                <span class="post-views">
+                    👁 ${viewsCountFor(post.id)}
+                </span>
             </div>
 
             <br>
@@ -150,6 +161,14 @@ export async function renderUserFeed(containerEl, targetUserId, modalEls) {
 
         `;
 
+    });
+
+    // Счёт просмотров: засчитываем, когда карточка реально показалась
+    // пользователю (не сразу при рендере списка).
+    observeViews(containerEl, posts, currentUser, (postId) => {
+        viewsData.push({ post_id: postId });
+        const span = containerEl.querySelector(`.post[data-id="${postId}"] .post-views`);
+        if (span) span.textContent = `👁 ${viewsCountFor(postId)}`;
     });
 
     /* Удаление поста */
@@ -285,6 +304,8 @@ export async function renderUserFeed(containerEl, targetUserId, modalEls) {
                             ❤️ ${likesCount}
                             &nbsp;&nbsp;
                             💬 ${commentsCount}
+                            &nbsp;&nbsp;
+                            👁 ${viewsCountFor(postId)}
                         </div>
                         <h3>Комментарии</h3>
                         <div class="comments">${commentsHtml}</div>
