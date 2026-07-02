@@ -115,6 +115,7 @@ document.getElementById("filterNoGif").addEventListener("change", (e) => {
     applyAndRender();
 });
 document.getElementById("filterFollowing").addEventListener("change", applyAndRender);
+document.getElementById("filterHideOwn").addEventListener("change", applyAndRender);
 document.querySelectorAll('input[name="sortOrder"]').forEach(r => r.addEventListener("change", applyAndRender));
 
 // ===== SEARCH =====
@@ -127,6 +128,7 @@ function applyAndRender() {
     const onlyFollowing = document.getElementById("filterFollowing").checked;
     const onlyGif       = document.getElementById("filterOnlyGif").checked;
     const noGif         = document.getElementById("filterNoGif").checked;
+    const hideOwn       = document.getElementById("filterHideOwn").checked;
     const sortVal       = document.querySelector('input[name="sortOrder"]:checked').value;
 
     let filtered = allPosts.slice();
@@ -144,6 +146,11 @@ function applyAndRender() {
         filtered = filtered.filter(post => followingIds.has(post.user_id));
     }
 
+    // Filter: hide own posts
+    if (hideOwn && currentUser) {
+        filtered = filtered.filter(post => post.user_id !== currentUser.id);
+    }
+
     // Filter: GIF
     if (onlyGif) {
         filtered = filtered.filter(post => post.image_url && post.image_url.toLowerCase().endsWith(".gif"));
@@ -157,6 +164,8 @@ function applyAndRender() {
         const bLikes    = (allLikes.filter(l => l.post_id === b.id)).length;
         const aComments = (allComments.filter(c => c.post_id === a.id)).length;
         const bComments = (allComments.filter(c => c.post_id === b.id)).length;
+        const aViews    = viewsCountFor(a.id);
+        const bViews    = viewsCountFor(b.id);
         const aDate     = new Date(a.created_at);
         const bDate     = new Date(b.created_at);
 
@@ -167,6 +176,8 @@ function applyAndRender() {
             case "least_likes":   return aLikes - bLikes;
             case "most_comments": return bComments - aComments;
             case "least_comments":return aComments - bComments;
+            case "most_views":    return bViews - aViews;
+            case "least_views":   return aViews - bViews;
             default:              return bDate - aDate;
         }
     });
