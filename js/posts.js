@@ -1,5 +1,6 @@
 import { supabase } from "./supabase.js";
 import { notifyLike, removeLikeNotification, notifyComment, removeNotificationsForPost } from "./notifications.js";
+import { fetchViewsForPosts, observeViews } from "./views.js";
 
 // ===== ФОРМАТИРОВАНИЕ ВРЕМЕНИ =====
 function formatTime(dateStr) {
@@ -57,8 +58,13 @@ document.getElementById("postImage").addEventListener("change", (e) => {
 let allPosts      = [];
 let allLikes      = [];
 let allComments   = [];
+let allViews      = [];
 let currentUser   = null;
 let followingIds  = new Set();
+
+function viewsCountFor(postId) {
+    return allViews.filter(v => v.post_id === postId).length;
+}
 
 // ===== DROPDOWNS =====
 const filterBtn    = document.getElementById("filterBtn");
@@ -203,11 +209,20 @@ function renderPosts(posts) {
                     ${isLiked ? "❤️" : "🤍"} ${likesCount}
                 </button>
                 <span>💬 ${commentsCount}</span>
+                <span class="post-views">👁 ${viewsCountFor(post.id)}</span>
             </div>
             <br>
             ${canDelete ? `<button class="deletePostBtn">🗑 Удалить</button>` : ""}
             <hr>
         </div>`;
+    });
+
+    // Счёт просмотров: засчитываем, когда карточка реально показалась
+    // пользователю (не сразу при рендере списка).
+    observeViews(feed, posts, currentUser, (postId) => {
+        allViews.push({ post_id: postId });
+        const span = feed.querySelector(`.post[data-id="${postId}"] .post-views`);
+        if (span) span.textContent = `👁 ${viewsCountFor(postId)}`;
     });
 
     // Delete buttons
@@ -280,7 +295,7 @@ function renderPosts(posts) {
                 <div class="post-time">🕐 ${formatTime(post.created_at)}</div>
                 <p>${post.content || ""}</p>
                 <hr>
-                <div class="post-stats">❤️ ${likesCount} &nbsp;&nbsp; 💬 ${commentsCount}</div>
+                <div class="post-stats">❤️ ${likesCount} &nbsp;&nbsp; 💬 ${commentsCount} &nbsp;&nbsp; 👁 ${viewsCountFor(postId)}</div>
                 <h3>Комментарии</h3>
                 <div class="comments">${commentsHtml}</div>
                 <hr>
@@ -343,6 +358,7 @@ async function loadFeed() {
     allPosts    = posts    || [];
     allLikes    = likesData    || [];
     allComments = commentsData || [];
+    allViews    = await fetchViewsForPosts(allPosts.map(p => p.id));
     currentUser = user;
 
     // Load following list
