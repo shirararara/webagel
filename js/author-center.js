@@ -3,6 +3,7 @@ import {
     getFollowersCount,
     getFollowingCount
 } from "./follows.js";
+import { fetchViewsWithDates } from "./views.js";
 
 // ===== Утилита: детерминированное "случайное" число по строке =====
 // Нужно, чтобы демо-данные были стабильными для одного и того же пользователя,
@@ -75,9 +76,10 @@ async function init() {
 
     document.getElementById("statPosts").textContent = userPosts.length;
 
-    // ===== Лайки и комментарии на эти публикации =====
+    // ===== Лайки, комментарии и просмотры на эти публикации =====
     let likes = [];
     let comments = [];
+    let views = [];
 
     if (postIds.length > 0) {
         const { data: likesData } = await supabase
@@ -92,10 +94,12 @@ async function init() {
 
         likes = likesData || [];
         comments = commentsData || [];
+        views = await fetchViewsWithDates(postIds);
     }
 
     document.getElementById("statLikes").textContent = likes.length;
     document.getElementById("statComments").textContent = comments.length;
+    document.getElementById("statViews").textContent = views.length;
 
     const engagementPerPost = userPosts.length > 0
         ? ((likes.length + comments.length) / userPosts.length).toFixed(1)
@@ -144,7 +148,8 @@ async function init() {
         const postsWithStats = userPosts.map(post => ({
             post,
             likes: likes.filter(l => l.post_id === post.id).length,
-            comments: comments.filter(c => c.post_id === post.id).length
+            comments: comments.filter(c => c.post_id === post.id).length,
+            views: views.filter(v => v.post_id === post.id).length
         }));
 
         postsWithStats.sort((a, b) => b.likes - a.likes);
@@ -157,23 +162,31 @@ async function init() {
                 <div class="post-stats">
                     <span>❤️ ${top.likes}</span>
                     <span>💬 ${top.comments}</span>
+                    <span>👁 ${top.views}</span>
                 </div>
             </div>
         `;
     }
 
-    // ===== Условная (демо) аналитика просмотров профиля =====
-    const rand = seededRandom(user.id);
-    const baseViews = 20 + Math.floor(rand() * 60);
+    // ===== Реальная аналитика просмотров публикаций за 7 дней =====
+    const viewsPerDay = days.map(day => {
+        const next = new Date(day);
+        next.setDate(day.getDate() + 1);
 
-    const viewsPerDay = days.map((day, idx) => ({
-        label: formatDayLabel(day),
-        value: Math.max(1, Math.round(baseViews + (rand() - 0.5) * 30 + idx * 2))
-    }));
+        const count = views.filter(v => {
+            const viewedAt = new Date(v.viewed_at);
+            return viewedAt >= day && viewedAt < next;
+        }).length;
+
+        return { label: formatDayLabel(day), value: count };
+    });
 
     renderBarChart(document.getElementById("viewsChart"), viewsPerDay, "#7c5cff");
 
     // ===== Условные (демо) источники аудитории =====
+    // Примечание: seededRandom(user.id) используется только здесь —
+    // реального учёта источников переходов (откуда пришёл просмотр) в проекте нет.
+    const rand = seededRandom(user.id);
     const sources = [
         { label: "Рекомендации", icon: "✦" },
         { label: "Поиск", icon: "🔍" },
