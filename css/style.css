@@ -573,6 +573,7 @@ a {
     display: block;
     flex-shrink: 0;
     background: #000;
+    cursor: pointer;
 }
 
 /* 18+ blur wrapper */
