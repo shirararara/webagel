@@ -338,6 +338,9 @@ export async function renderUserFeed(containerEl, targetUserId, modalEls) {
 
             modalEls.postModal.style.display = "flex";
 
+            const modalVideo = modalEls.modalImageSide.querySelector("video");
+            if (modalVideo) modalVideo.volume = 0;
+
             const modalOverlay = modalEls.modalImageSide.querySelector(".adult-overlay");
             if (modalOverlay) {
                 modalOverlay.onclick = (e) => {
@@ -357,6 +360,9 @@ export async function renderUserFeed(containerEl, targetUserId, modalEls) {
                         .eq("id", postId);
 
                     await removeNotificationsForPost(postId);
+
+                    const video = modalEls.modalImageSide.querySelector("video");
+                    if (video) { video.pause(); video.currentTime = 0; }
 
                     modalEls.postModal.style.display = "none";
                     renderUserFeed(containerEl, targetUserId, modalEls);
