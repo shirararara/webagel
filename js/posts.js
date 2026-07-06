@@ -31,6 +31,7 @@ function openCreateModal() {
     document.getElementById("postText").value = "";
     document.getElementById("postImage").value = "";
     document.getElementById("postVideo").value = "";
+    document.getElementById("postAdultContent").checked = false;
     setMediaType("photo");
     createPostModal.style.display = "flex";
 }
@@ -260,9 +261,20 @@ function renderPosts(posts) {
                 <span class="post-time">🕐 ${formatTime(post.created_at)}</span>
             </div>
             <p>${post.content || ""}</p>
-            ${post.video_url
-                ? `<video class="post-video" src="${post.video_url}" controls></video>`
-                : (post.image_url ? `<img class="post-image" src="${post.image_url}">` : "")}
+            ${(() => {
+                if (!post.video_url && !post.image_url) return "";
+                const mediaTag = post.video_url
+                    ? `<video class="post-video" src="${post.video_url}" controls></video>`
+                    : `<img class="post-image" src="${post.image_url}">`;
+                if (!post.is_adult) return mediaTag;
+                return `<div class="post-media-wrapper blurred">
+                    ${mediaTag}
+                    <div class="adult-overlay">
+                        <span class="adult-badge">18+</span>
+                        <span class="adult-hint">Нажмите, чтобы посмотреть</span>
+                    </div>
+                </div>`;
+            })()}
             <div class="post-stats">
                 <button class="likeBtn" data-id="${post.id}">
                     ${isLiked ? "❤️" : "🤍"} ${likesCount}
@@ -344,9 +356,18 @@ function renderPosts(posts) {
                 </div>
             `).join("");
 
-            document.getElementById("modalImageSide").innerHTML = post.video_url
+            const mediaTag = post.video_url
                 ? `<video src="${post.video_url}" controls autoplay></video>`
                 : `<img src="${post.image_url || ''}">`;
+            document.getElementById("modalImageSide").innerHTML = post.is_adult
+                ? `<div class="post-media-wrapper blurred">
+                    ${mediaTag}
+                    <div class="adult-overlay">
+                        <span class="adult-badge">18+</span>
+                        <span class="adult-hint">Нажмите, чтобы посмотреть</span>
+                    </div>
+                </div>`
+                : mediaTag;
             document.getElementById("modalInfoSide").innerHTML = `
                 <h2>
                     <a href="user.html?id=${post.user_id}" class="modal-author-link">${post.username}</a>
@@ -368,6 +389,15 @@ function renderPosts(posts) {
             `;
 
             document.getElementById("postModal").style.display = "flex";
+
+            const modalOverlay = document.querySelector("#modalImageSide .adult-overlay");
+            if (modalOverlay) {
+                modalOverlay.onclick = (e) => {
+                    e.stopPropagation();
+                    modalOverlay.closest(".post-media-wrapper").classList.remove("blurred");
+                    modalOverlay.remove();
+                };
+            }
 
             const deleteBtn = document.getElementById("deleteModalPost");
             if (deleteBtn) {
@@ -401,6 +431,15 @@ function renderPosts(posts) {
             const postCard = el.closest(".post");
             const postId   = Number(postCard.dataset.id);
             openPostDetailModal(postId);
+        };
+    });
+
+    // 18+ overlay: first click just removes the blur, doesn't open the modal
+    feed.querySelectorAll(".adult-overlay").forEach(overlay => {
+        overlay.onclick = (e) => {
+            e.stopPropagation();
+            overlay.closest(".post-media-wrapper").classList.remove("blurred");
+            overlay.remove();
         };
     });
 
@@ -482,7 +521,8 @@ document.getElementById("publishBtn").onclick = async () => {
         avatar_url: profile.avatar_url,
         content:    postText.value,
         image_url:  imageUrl,
-        video_url:  videoUrl
+        video_url:  videoUrl,
+        is_adult:   document.getElementById("postAdultContent").checked
     });
 
     if (insertResult.error) { alert(insertResult.error.message); return; }
