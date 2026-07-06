@@ -142,12 +142,17 @@
 <div id="createPostModal">
     <div id="createPostContent">
         <div id="createPostImageSide">
-            <label id="imageDropZone">
+            <div id="mediaTypeToggle">
+                <button type="button" id="mediaTypePhoto" class="mediaTypeBtn active">📷 Фото</button>
+                <button type="button" id="mediaTypeVideo" class="mediaTypeBtn">🎬 Видео</button>
+            </div>
+            <div id="imageDropZone">
                 <input type="file" id="postImage" accept="image/*">
+                <input type="file" id="postVideo" accept="video/*" style="display:none">
                 <div id="imagePreview">
                     <span id="imageDropHint">📷 Нажмите, чтобы добавить фото</span>
                 </div>
-            </label>
+            </div>
         </div>
         <div id="createPostInfoSide">
             <h2>Новая публикация</h2>
