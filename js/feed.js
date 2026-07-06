@@ -124,11 +124,20 @@ export async function renderUserFeed(containerEl, targetUserId, modalEls) {
             </p>
 
             ${
-                post.image_url
-                ?
-                `<img class="post-image" src="${post.image_url}">`
-                :
-                ""
+                (() => {
+                    if (!post.video_url && !post.image_url) return "";
+                    const mediaTag = post.video_url
+                        ? `<video class="post-video" src="${post.video_url}" controls></video>`
+                        : `<img class="post-image" src="${post.image_url}">`;
+                    if (!post.is_adult) return mediaTag;
+                    return `<div class="post-media-wrapper blurred">
+                        ${mediaTag}
+                        <div class="adult-overlay">
+                            <span class="adult-badge">18+</span>
+                            <span class="adult-hint">Нажмите, чтобы посмотреть</span>
+                        </div>
+                    </div>`;
+                })()
             }
 
             <div class="post-stats">
@@ -136,7 +145,7 @@ export async function renderUserFeed(containerEl, targetUserId, modalEls) {
                     ${isLiked ? "❤️" : "🤍"} ${likesCount}
                 </button>
 
-                <span>
+                <span class="post-comments-open" data-id="${post.id}">
                     💬 ${commentsCount}
                 </span>
 
@@ -249,136 +258,164 @@ export async function renderUserFeed(containerEl, targetUserId, modalEls) {
 
         });
 
-    /* Открытие модалки по клику на изображение поста */
+    /* Открытие модалки по клику на медиа поста или счётчик комментариев */
     if (modalEls) {
 
-        containerEl
-            .querySelectorAll(".post-image")
-            .forEach(image => {
+        function openDetailModal(postId) {
 
-                image.onclick = () => {
+            const post = posts.find(p => p.id === postId);
+            if (!post) return;
 
-                    const postCard = image.closest(".post");
-                    const postId = Number(postCard.dataset.id);
+            const postComments =
+                (commentsData || []).filter(
+                    comment => comment.post_id === postId
+                );
 
-                    const post = posts.find(p => p.id === postId);
+            const postLikes =
+                (likesData || []).filter(
+                    like => like.post_id === postId
+                );
 
-                    const postComments =
-                        (commentsData || []).filter(
-                            comment => comment.post_id === postId
-                        );
+            const commentsCount = postComments.length;
+            const likesCount = postLikes.length;
 
-                    const postLikes =
-                        (likesData || []).filter(
-                            like => like.post_id === postId
-                        );
+            const commentsHtml = postComments.map(comment => `
+                <div class="comment">
+                    <strong>${comment.username}</strong>
+                    <span class="comment-time">🕐 ${formatTime(comment.created_at)}</span>
+                    <div>${comment.content}</div>
+                </div>
+            `).join("");
 
-                    const commentsCount = postComments.length;
-                    const likesCount = postLikes.length;
+            const mediaTag = post.video_url
+                ? `<video src="${post.video_url}" controls autoplay></video>`
+                : `<img src="${post.image_url || ''}">`;
 
-                    const postImage = postCard.querySelector(".post-image");
+            modalEls.modalImageSide.innerHTML = post.is_adult
+                ? `<div class="post-media-wrapper blurred">
+                    ${mediaTag}
+                    <div class="adult-overlay">
+                        <span class="adult-badge">18+</span>
+                        <span class="adult-hint">Нажмите, чтобы посмотреть</span>
+                    </div>
+                </div>`
+                : mediaTag;
 
-                    if (!postImage) return;
+            modalEls.modalInfoSide.innerHTML = `
+                <h2>
+                    <a href="user.html?id=${post.user_id}" class="modal-author-link">
+                        ${post.username}
+                    </a>
+                </h2>
+                <div class="post-time">🕐 ${formatTime(post.created_at)}</div>
+                <p>${post.content || ""}</p>
+                <hr>
+                <div class="post-stats">
+                    ❤️ ${likesCount}
+                    &nbsp;&nbsp;
+                    💬 ${commentsCount}
+                    &nbsp;&nbsp;
+                    👁 ${viewsCountFor(postId)}
+                </div>
+                <h3>Комментарии</h3>
+                <div class="comments">${commentsHtml}</div>
+                <hr>
+                <div class="comment-form">
+                    <input id="modalCommentInput" placeholder="Написать комментарий">
+                    <button id="modalCommentBtn">Отправить</button>
+                </div>
+                ${
+                    currentUser && currentUser.id === post.user_id
+                    ?
+                    `<button id="deleteModalPost">🗑 Удалить пост</button>`
+                    :
+                    ""
+                }
+            `;
 
-                    const commentsHtml = postComments.map(comment => `
-                        <div class="comment">
-                            <strong>${comment.username}</strong>
-                            <span class="comment-time">🕐 ${formatTime(comment.created_at)}</span>
-                            <div>${comment.content}</div>
-                        </div>
-                    `).join("");
+            modalEls.postModal.style.display = "flex";
 
-                    modalEls.modalImageSide.innerHTML =
-                        `<img src="${postImage.src}">`;
-
-                    modalEls.modalInfoSide.innerHTML = `
-                        <h2>
-                            <a href="user.html?id=${post.user_id}" class="modal-author-link">
-                                ${post.username}
-                            </a>
-                        </h2>
-                        <div class="post-time">🕐 ${formatTime(post.created_at)}</div>
-                        <p>${post.content || ""}</p>
-                        <hr>
-                        <div class="post-stats">
-                            ❤️ ${likesCount}
-                            &nbsp;&nbsp;
-                            💬 ${commentsCount}
-                            &nbsp;&nbsp;
-                            👁 ${viewsCountFor(postId)}
-                        </div>
-                        <h3>Комментарии</h3>
-                        <div class="comments">${commentsHtml}</div>
-                        <hr>
-                        <div class="comment-form">
-                            <input id="modalCommentInput" placeholder="Написать комментарий">
-                            <button id="modalCommentBtn">Отправить</button>
-                        </div>
-                        ${
-                            currentUser && currentUser.id === post.user_id
-                            ?
-                            `<button id="deleteModalPost">🗑 Удалить пост</button>`
-                            :
-                            ""
-                        }
-                    `;
-
-                    modalEls.postModal.style.display = "flex";
-
-                    const deleteBtn = document.getElementById("deleteModalPost");
-
-                    if (deleteBtn) {
-                        deleteBtn.onclick = async () => {
-                            await supabase
-                                .from("posts")
-                                .delete()
-                                .eq("id", postId);
-
-                            await removeNotificationsForPost(postId);
-
-                            modalEls.postModal.style.display = "none";
-                            renderUserFeed(containerEl, targetUserId, modalEls);
-                        };
-                    }
-
-                    document.getElementById("modalCommentBtn").onclick = async () => {
-
-                        const text = document
-                            .getElementById("modalCommentInput")
-                            .value.trim();
-
-                        if (!text) return;
-
-                        const { data: { user } } = await supabase.auth.getUser();
-
-                        if (!user) {
-                            alert("Войдите в аккаунт");
-                            return;
-                        }
-
-                        const { data: profile } = await supabase
-                            .from("profiles")
-                            .select("*")
-                            .eq("id", user.id)
-                            .single();
-
-                        await supabase
-                            .from("comments")
-                            .insert({
-                                post_id: postId,
-                                user_id: user.id,
-                                username: profile.username,
-                                avatar_url: profile.avatar_url,
-                                content: text
-                            });
-
-                        await notifyComment(post.user_id, user.id, postId, text);
-
-                        renderUserFeed(containerEl, targetUserId, modalEls);
-                    };
-
+            const modalOverlay = modalEls.modalImageSide.querySelector(".adult-overlay");
+            if (modalOverlay) {
+                modalOverlay.onclick = (e) => {
+                    e.stopPropagation();
+                    modalOverlay.closest(".post-media-wrapper").classList.remove("blurred");
+                    modalOverlay.remove();
                 };
+            }
 
+            const deleteBtn = document.getElementById("deleteModalPost");
+
+            if (deleteBtn) {
+                deleteBtn.onclick = async () => {
+                    await supabase
+                        .from("posts")
+                        .delete()
+                        .eq("id", postId);
+
+                    await removeNotificationsForPost(postId);
+
+                    modalEls.postModal.style.display = "none";
+                    renderUserFeed(containerEl, targetUserId, modalEls);
+                };
+            }
+
+            document.getElementById("modalCommentBtn").onclick = async () => {
+
+                const text = document
+                    .getElementById("modalCommentInput")
+                    .value.trim();
+
+                if (!text) return;
+
+                const { data: { user } } = await supabase.auth.getUser();
+
+                if (!user) {
+                    alert("Войдите в аккаунт");
+                    return;
+                }
+
+                const { data: profile } = await supabase
+                    .from("profiles")
+                    .select("*")
+                    .eq("id", user.id)
+                    .single();
+
+                await supabase
+                    .from("comments")
+                    .insert({
+                        post_id: postId,
+                        user_id: user.id,
+                        username: profile.username,
+                        avatar_url: profile.avatar_url,
+                        content: text
+                    });
+
+                await notifyComment(post.user_id, user.id, postId, text);
+
+                renderUserFeed(containerEl, targetUserId, modalEls);
+            };
+        }
+
+        containerEl
+            .querySelectorAll(".post-image, .post-video, .post-comments-open")
+            .forEach(el => {
+                el.onclick = () => {
+                    const postCard = el.closest(".post");
+                    const postId = Number(postCard.dataset.id);
+                    openDetailModal(postId);
+                };
+            });
+
+        // 18+ оверлей в карточке ленты: первый клик снимает блюр, не открывая модалку
+        containerEl
+            .querySelectorAll(".adult-overlay")
+            .forEach(overlay => {
+                overlay.onclick = (e) => {
+                    e.stopPropagation();
+                    overlay.closest(".post-media-wrapper").classList.remove("blurred");
+                    overlay.remove();
+                };
             });
 
     }
