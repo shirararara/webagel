@@ -368,7 +368,7 @@ function renderPosts(posts) {
             `).join("");
 
             const mediaTag = post.video_url
-                ? `<video src="${post.video_url}" controls autoplay></video>`
+                ? `<video src="${post.video_url}" controls autoplay loop></video>`
                 : `<img src="${post.image_url || ''}">`;
             document.getElementById("modalImageSide").innerHTML = post.is_adult
                 ? `<div class="post-media-wrapper blurred">
