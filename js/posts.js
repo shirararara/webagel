@@ -264,7 +264,10 @@ function renderPosts(posts) {
             ${(() => {
                 if (!post.video_url && !post.image_url) return "";
                 const mediaTag = post.video_url
-                    ? `<video class="post-video" src="${post.video_url}" controls></video>`
+                    ? `<div class="video-thumb">
+                        <video class="post-video" src="${post.video_url}" preload="metadata" playsinline oncontextmenu="return false;"></video>
+                        <span class="video-play-badge">▶</span>
+                    </div>`
                     : `<img class="post-image" src="${post.image_url}">`;
                 if (!post.is_adult) return mediaTag;
                 return `<div class="post-media-wrapper blurred">
