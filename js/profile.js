@@ -138,7 +138,12 @@ user.id,
 );
 
 postModal.onclick = () => {
+
+const video = modalImageSide?.querySelector("video");
+if (video) { video.pause(); video.currentTime = 0; }
+
 postModal.style.display = "none";
+
 };
 
 modalImageSide?.addEventListener(
