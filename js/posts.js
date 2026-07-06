@@ -426,7 +426,7 @@ function renderPosts(posts) {
             };
     }
 
-    feed.querySelectorAll(".post-image, .post-comments-open").forEach(el => {
+    feed.querySelectorAll(".post-image, .post-video, .post-comments-open").forEach(el => {
         el.onclick = () => {
             const postCard = el.closest(".post");
             const postId   = Number(postCard.dataset.id);
@@ -441,12 +441,6 @@ function renderPosts(posts) {
             overlay.closest(".post-media-wrapper").classList.remove("blurred");
             overlay.remove();
         };
-    });
-
-    // Videos use native controls; open the details modal via a small
-    // caption hint instead of hijacking clicks on the player itself.
-    feed.querySelectorAll(".post-video").forEach(video => {
-        video.title = "Открыть публикацию: нажмите на 💬";
     });
 
     const postModal = document.getElementById("postModal");
