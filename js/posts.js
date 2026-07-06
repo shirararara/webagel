@@ -103,6 +103,14 @@ postVideoInput.addEventListener("change", (e) => {
 
 // ===== STATE =====
 let allPosts      = [];
+
+function stopModalVideo() {
+    const video = document.querySelector("#modalImageSide video");
+    if (video) {
+        video.pause();
+        video.currentTime = 0;
+    }
+}
 let allLikes      = [];
 let allComments   = [];
 let allViews      = [];
@@ -393,6 +401,9 @@ function renderPosts(posts) {
 
             document.getElementById("postModal").style.display = "flex";
 
+            const modalVideo = document.querySelector("#modalImageSide video");
+            if (modalVideo) modalVideo.volume = 0;
+
             const modalOverlay = document.querySelector("#modalImageSide .adult-overlay");
             if (modalOverlay) {
                 modalOverlay.onclick = (e) => {
@@ -409,6 +420,7 @@ function renderPosts(posts) {
                     await supabase.from("comments").delete().eq("post_id", postId);
                     await supabase.from("posts").delete().eq("id", postId);
                     await removeNotificationsForPost(postId);
+                    stopModalVideo();
                     document.getElementById("postModal").style.display = "none";
                     await loadFeed();
                 };
@@ -447,7 +459,7 @@ function renderPosts(posts) {
     });
 
     const postModal = document.getElementById("postModal");
-    postModal.onclick = () => { postModal.style.display = "none"; };
+    postModal.onclick = () => { stopModalVideo(); postModal.style.display = "none"; };
     postModal.querySelector("#modalImageSide")?.addEventListener("click", e => e.stopPropagation());
     postModal.querySelector("#modalInfoSide")?.addEventListener("click",  e => e.stopPropagation());
 }
