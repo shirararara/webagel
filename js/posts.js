@@ -30,8 +30,8 @@ const cancelPostBtn   = document.getElementById("cancelPostBtn");
 function openCreateModal() {
     document.getElementById("postText").value = "";
     document.getElementById("postImage").value = "";
-    const preview = document.getElementById("imagePreview");
-    preview.innerHTML = `<span id="imageDropHint">📷 Нажмите, чтобы добавить фото</span>`;
+    document.getElementById("postVideo").value = "";
+    setMediaType("photo");
     createPostModal.style.display = "flex";
 }
 
@@ -46,12 +46,58 @@ createPostModal.addEventListener("click", (e) => {
     if (e.target === createPostModal) closeCreateModal();
 });
 
-document.getElementById("postImage").addEventListener("change", (e) => {
+// ===== MEDIA TYPE TOGGLE (Фото / Видео) =====
+const postImageInput = document.getElementById("postImage");
+const postVideoInput = document.getElementById("postVideo");
+const mediaTypePhotoBtn = document.getElementById("mediaTypePhoto");
+const mediaTypeVideoBtn = document.getElementById("mediaTypeVideo");
+let currentMediaType = "photo";
+
+function setMediaType(type) {
+    currentMediaType = type;
+    postImageInput.value = "";
+    postVideoInput.value = "";
+
+    const preview = document.getElementById("imagePreview");
+
+    if (type === "video") {
+        mediaTypeVideoBtn.classList.add("active");
+        mediaTypePhotoBtn.classList.remove("active");
+        postImageInput.style.display = "none";
+        postVideoInput.style.display = "";
+        preview.innerHTML = `<span id="imageDropHint">🎬 Нажмите, чтобы добавить видео</span>`;
+    } else {
+        mediaTypePhotoBtn.classList.add("active");
+        mediaTypeVideoBtn.classList.remove("active");
+        postImageInput.style.display = "";
+        postVideoInput.style.display = "none";
+        preview.innerHTML = `<span id="imageDropHint">📷 Нажмите, чтобы добавить фото</span>`;
+    }
+}
+
+mediaTypePhotoBtn.addEventListener("click", () => setMediaType("photo"));
+mediaTypeVideoBtn.addEventListener("click", () => setMediaType("video"));
+
+document.getElementById("imageDropZone").addEventListener("click", (e) => {
+    if (e.target.closest(".mediaTypeBtn")) return;
+    if (e.target.tagName === "INPUT") return;
+    (currentMediaType === "video" ? postVideoInput : postImageInput).click();
+});
+
+postImageInput.addEventListener("change", (e) => {
     const file = e.target.files[0];
     if (!file) return;
     const url = URL.createObjectURL(file);
     const preview = document.getElementById("imagePreview");
     preview.innerHTML = `<img src="${url}">`;
+});
+
+postVideoInput.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    const preview = document.getElementById("imagePreview");
+    preview.innerHTML = `<video src="${url}" controls autoplay muted loop></video>`;
 });
 
 // ===== STATE =====
@@ -214,12 +260,14 @@ function renderPosts(posts) {
                 <span class="post-time">🕐 ${formatTime(post.created_at)}</span>
             </div>
             <p>${post.content || ""}</p>
-            ${post.image_url ? `<img class="post-image" src="${post.image_url}">` : ""}
+            ${post.video_url
+                ? `<video class="post-video" src="${post.video_url}" controls></video>`
+                : (post.image_url ? `<img class="post-image" src="${post.image_url}">` : "")}
             <div class="post-stats">
                 <button class="likeBtn" data-id="${post.id}">
                     ${isLiked ? "❤️" : "🤍"} ${likesCount}
                 </button>
-                <span>💬 ${commentsCount}</span>
+                <span class="post-comments-open" data-id="${post.id}">💬 ${commentsCount}</span>
                 <span class="post-views">👁 ${viewsCountFor(post.id)}</span>
             </div>
             <br>
@@ -278,12 +326,10 @@ function renderPosts(posts) {
         };
     });
 
-    // Post image modal
-    feed.querySelectorAll(".post-image").forEach(image => {
-        image.onclick = () => {
-            const postCard = image.closest(".post");
-            const postId   = Number(postCard.dataset.id);
-            const post     = allPosts.find(p => p.id === postId);
+    // Post detail modal (comments, likes, full view)
+    function openPostDetailModal(postId) {
+            const post = allPosts.find(p => p.id === postId);
+            if (!post) return;
 
             const postComments = allComments.filter(c => c.post_id === postId);
             const postLikes    = allLikes.filter(l => l.post_id === postId);
@@ -298,7 +344,9 @@ function renderPosts(posts) {
                 </div>
             `).join("");
 
-            document.getElementById("modalImageSide").innerHTML = `<img src="${image.src}">`;
+            document.getElementById("modalImageSide").innerHTML = post.video_url
+                ? `<video src="${post.video_url}" controls autoplay></video>`
+                : `<img src="${post.image_url || ''}">`;
             document.getElementById("modalInfoSide").innerHTML = `
                 <h2>
                     <a href="user.html?id=${post.user_id}" class="modal-author-link">${post.username}</a>
@@ -346,7 +394,20 @@ function renderPosts(posts) {
                 await notifyComment(post.user_id, user.id, postId, text);
                 await loadFeed();
             };
+    }
+
+    feed.querySelectorAll(".post-image, .post-comments-open").forEach(el => {
+        el.onclick = () => {
+            const postCard = el.closest(".post");
+            const postId   = Number(postCard.dataset.id);
+            openPostDetailModal(postId);
         };
+    });
+
+    // Videos use native controls; open the details modal via a small
+    // caption hint instead of hijacking clicks on the player itself.
+    feed.querySelectorAll(".post-video").forEach(video => {
+        video.title = "Открыть публикацию: нажмите на 💬";
     });
 
     const postModal = document.getElementById("postModal");
@@ -385,8 +446,7 @@ async function loadFeed() {
 
 // ===== PUBLISH =====
 document.getElementById("publishBtn").onclick = async () => {
-    const postImage = document.getElementById("postImage");
-    const postText  = document.getElementById("postText");
+    const postText = document.getElementById("postText");
 
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { alert("Нужно войти"); return; }
@@ -396,8 +456,18 @@ document.getElementById("publishBtn").onclick = async () => {
     const profile = profileResult.data;
 
     let imageUrl = null;
-    if (postImage.files.length > 0) {
-        const file      = postImage.files[0];
+    let videoUrl = null;
+
+    if (currentMediaType === "video" && postVideoInput.files.length > 0) {
+        const file      = postVideoInput.files[0];
+        const extension = file.name.split(".").pop();
+        const fileName  = `${Date.now()}.${extension}`;
+        const uploadResult = await supabase.storage.from("posts").upload(fileName, file);
+        if (uploadResult.error) { alert(uploadResult.error.message); return; }
+        const { data } = supabase.storage.from("posts").getPublicUrl(fileName);
+        videoUrl = data.publicUrl;
+    } else if (currentMediaType === "photo" && postImageInput.files.length > 0) {
+        const file      = postImageInput.files[0];
         const extension = file.name.split(".").pop();
         const fileName  = `${Date.now()}.${extension}`;
         const uploadResult = await supabase.storage.from("posts").upload(fileName, file);
@@ -411,7 +481,8 @@ document.getElementById("publishBtn").onclick = async () => {
         username:   profile.username,
         avatar_url: profile.avatar_url,
         content:    postText.value,
-        image_url:  imageUrl
+        image_url:  imageUrl,
+        video_url:  videoUrl
     });
 
     if (insertResult.error) { alert(insertResult.error.message); return; }
