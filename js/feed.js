@@ -291,7 +291,7 @@ export async function renderUserFeed(containerEl, targetUserId, modalEls) {
             `).join("");
 
             const mediaTag = post.video_url
-                ? `<video src="${post.video_url}" controls autoplay></video>`
+                ? `<video src="${post.video_url}" controls autoplay loop></video>`
                 : `<img src="${post.image_url || ''}">`;
 
             modalEls.modalImageSide.innerHTML = post.is_adult
