@@ -947,6 +947,31 @@ body:has(.profile) {
     z-index: 9999;
 }
 
+/* Close button — always available, even when the modal fills the whole screen on mobile */
+#modalCloseBtn {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    width: 38px;
+    height: 38px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.45);
+    color: #fff;
+    font-size: 18px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10000;
+    transition: background 0.15s;
+}
+
+#modalCloseBtn:hover {
+    background: rgba(0, 0, 0, 0.7);
+}
+
 #modalContent {
     width: 88vw;
     max-width: 1060px;
@@ -1384,6 +1409,15 @@ body:has(.profile) {
     #postModal,
     #createPostModal {
         align-items: flex-end;
+    }
+
+    #modalCloseBtn {
+        top: calc(12px + env(safe-area-inset-top));
+        right: 12px;
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+        background: rgba(0, 0, 0, 0.55);
     }
 
     #modalContent {
